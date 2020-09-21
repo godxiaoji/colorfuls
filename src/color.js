@@ -186,14 +186,21 @@ class RGBA {
   }
 
   /**
-   * 负片
+   *  反向色
    */
-  negate() {
+  invert() {
     this._r = 255 - this._r
     this._g = 255 - this._g
     this._b = 255 - this._b
 
     return this
+  }
+
+  /**
+   * 补充色
+   */
+  complement() {
+    return this.hsla().complement().rgba()
   }
 
   /**
@@ -371,6 +378,20 @@ class HSLA {
     return this.rgba().grayscale().hsla()
   }
 
+  /**
+   *  反向色
+   */
+  invert() {
+    return this.rgba().invert().hsla()
+  }
+
+  /**
+   * 补充色
+   */
+  complement() {
+    return this.rotate(180)
+  }
+
   isLight() {
     return this.rgba().isLight()
   }
@@ -451,6 +472,20 @@ class HEXA {
 
   isDark() {
     return this.rgba().isDark()
+  }
+
+  /**
+   *  反向色
+   */
+  invert() {
+    return this.rgba().invert().hexa()
+  }
+
+  /**
+   * 补充色
+   */
+  complement() {
+    return this.hsla().complement().hexa()
   }
 
   rgba() {

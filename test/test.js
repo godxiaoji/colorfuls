@@ -66,9 +66,9 @@ describe('Color', () => {
 
   describe('Manipulation', () => {
     // rgba
-    it('rgba.negate(): rgb(0, 100, 255) -> rgb(255, 155, 0)', () => {
+    it('rgba.invert(): rgb(0, 100, 255) -> rgb(255, 155, 0)', () => {
       assert.strictEqual(
-        Color('rgb(0, 100, 255)').negate().toRgb(),
+        Color('rgb(0, 100, 255)').invert().toRgb(),
         'rgb(255, 155, 0)'
       )
     })
@@ -89,8 +89,12 @@ describe('Color', () => {
     it('hexa.grayscale(): #5CBF54 -> #959595', () => {
       assert.strictEqual(Color('#5CBF54').grayscale().toHex(), '#959595')
     })
+    it('hexa.complement(): #7FFFD4 -> #FF7FAA', () => {
+      assert.strictEqual(Color('#7FFFD4').complement().toHex(), '#FF7FAA')
+    })
 
     // hsla
+
     it('hsla.rotate(180): hsl(60, 20%, 20%) -> hsl(240, 20%, 20%)', () => {
       assert.strictEqual(
         Color('hsl(60, 20%, 20%)').rotate(180).toHsl(),
