@@ -1,7 +1,7 @@
 import {
   rgba2RGBA,
-  hexa2RGBA,
-  hsla2RGBA,
+  hexa2HEXA,
+  hsla2HSLA,
   isHexa,
   isRgba,
   isHsla
@@ -13,31 +13,23 @@ import { isLimitPercentage, isNumber, isObject } from './util'
  * @param {String|{r:Number,g:Number,b:Number,a?:Number}|{h:Number,s:string,l:string,a?:Number}} value 颜色值
  */
 export default function Color(value) {
-  if (isHexa(value)) {
-    return hexa2RGBA(value).hexa()
-  } else if (isRgba(value)) {
-    return rgba2RGBA(value)
-  } else if (isHsla(value)) {
-    return hsla2RGBA(value).hsla()
-  } else if (isObject(value)) {
+  if (isObject(value)) {
     if (isNumber(value.r) && isNumber(value.g) && isNumber(value.b)) {
-      return rgba2RGBA(
-        `rgba(${value.r},${value.g},${value.b},${
-          isNumber(value.a) ? value.a : 1
-        })`
-      )
+      return rgba2RGBA(value)
     } else if (
       isNumber(value.h) &&
       isLimitPercentage(value.s) &&
       isLimitPercentage(value.l)
     ) {
-      return hsla2RGBA(
-        `hsla(${value.r},${value.g},${value.b},${
-          isNumber(value.a) ? value.a : 1
-        })`
-      ).hsla()
+      return hsla2HSLA(value)
     }
-  }
+  } else if (isHexa(value)) {
+    return hexa2HEXA(value)
+  } else if (isRgba(value)) {
+    return rgba2RGBA(value)
+  } else if (isHsla(value)) {
+    return hsla2HSLA(value)
+  } 
 }
 
 export function rgba2hexa(rgba) {
@@ -57,33 +49,33 @@ export function rgb2hsl(rgb) {
 }
 
 export function hexa2Rgba(hexa) {
-  return hexa2RGBA(hexa).toRgba()
+  return hexa2HEXA(hexa).toRgba()
 }
 
 export function hexa2hsla(hexa) {
-  return hexa2RGBA(hexa).toHsla()
+  return hexa2HEXA(hexa).toHsla()
 }
 
 export function hex2Rgb(hex) {
-  return hexa2RGBA(hex).toRgb()
+  return hexa2HEXA(hex).toRgb()
 }
 
 export function hex2hsl(hex) {
-  return hexa2RGBA(hex).toHsl()
+  return hexa2HEXA(hex).toHsl()
 }
 
 export function hsla2Rgba(hsla) {
-  return hsla2RGBA(hsla).toRgba()
+  return hsla2HSLA(hsla).toRgba()
 }
 
 export function hsla2Hexa(hsla) {
-  return hsla2RGBA(hsla).toHexa()
+  return hsla2HSLA(hsla).toHexa()
 }
 
 export function hsl2Rgb(hsl) {
-  return hsla2RGBA(hsl).toRgb()
+  return hsla2HSLA(hsl).toRgb()
 }
 
 export function hsl2Hex(hsl) {
-  return hsla2RGBA(hsl).toHex()
+  return hsla2HSLA(hsl).toHex()
 }

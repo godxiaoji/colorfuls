@@ -1,4 +1,11 @@
-import { num2Hex } from './util'
+import {
+  isNumber,
+  isNumeric,
+  isObject,
+  isString,
+  decimal2Hex,
+  numberRange
+} from './util'
 
 // PS：不会写比较骚的正则，这个虽然长，但是容易看懂
 const hexaReg = /^#([0-9a-f]{8}|[0-9a-f]{6}|[0-9a-f]{3});?$/i
@@ -64,9 +71,9 @@ function _rgb2hsl(r, g, b) {
   }
 
   return {
-    h: Math.round(h * 360).toString(),
-    s: Math.round(s * 100) + '%',
-    l: Math.round(l * 100) + '%'
+    h,
+    s,
+    l
   }
 }
 
@@ -80,15 +87,29 @@ function _rgb2hex(r, g, b) {
   return '#' + str
 }
 
+function _hsl2rgb(h, s, l) {
+  let r, g, b
+  if (s == 0) {
+    r = g = b = l
+  } else {
+    const p2 = l < 0.5 ? l * (1 + s) : l + s - l * s
+    const p1 = 2 * l - p2
+    r = hue2rgb(p1, p2, h + 1 / 3)
+    g = hue2rgb(p1, p2, h)
+    b = hue2rgb(p1, p2, h - 1 / 3)
+  }
+
+  return {
+    r: Math.round(r * 255),
+    g: Math.round(g * 255),
+    b: Math.round(b * 255)
+  }
+}
+
 function _parseAlpha(value) {
   let opacity = 1
-  if (value != null && value !== '') {
-    value = value.toString()
-    if (value.indexOf('%') !== -1) {
-      opacity = Math.round(parseInt(value) / 100)
-    } else {
-      opacity = parseFloat(value)
-    }
+  if (isNumeric(value)) {
+    return percentageToRangeBetween0And1(value)
   }
 
   return opacity
@@ -124,7 +145,7 @@ class RGBA {
   }
 
   hexa() {
-    return new HEXA(_rgb2hex(this.r, this.g, this.b) + num2Hex(this.a, 2))
+    return new HEXA(_rgb2hex(this.r, this.g, this.b) + decimal2Hex(this.a, 2))
   }
 
   toHex() {
@@ -160,8 +181,17 @@ class HSLA {
     this._a = _parseAlpha(value)
   }
 
+  rotate(deg) {
+    if (isNumber(deg)) {
+      this._h = ((this._h * 360 + deg + 360) % 360) / 360
+    }
+    return this
+  }
+
   rgba() {
-    return hsla2RGBA(this.toHsla())
+    const { r, g, b } = _hsl2rgb(this._h, this._s, this._l)
+
+    return new RGBA(r, g, b, this._a)
   }
 
   toRgb() {
@@ -185,11 +215,15 @@ class HSLA {
   }
 
   toHsl() {
-    return `hsl(${this._h}, ${this._s}, ${this._l})`
+    return `hsl(${Math.round(this._h * 360)}, ${Math.round(
+      this._s * 100
+    )}%, ${Math.round(this._l * 100)}%)`
   }
 
   toHsla() {
-    return `hsla(${this._h}, ${this._s}, ${this._l}, ${this._a})`
+    return `hsla(${Math.round(this._h * 360)}, ${Math.round(
+      this._s * 100
+    )}%, ${Math.round(this._l * 100)}%, ${this._a})`
   }
 
   toString() {
@@ -214,7 +248,12 @@ class HEXA {
   }
 
   rgba() {
-    return hexa2RGBA(this._hexa)
+    return new RGBA(
+      parseInt('0x' + this._hexa.slice(1, 3)),
+      parseInt('0x' + this._hexa.slice(3, 5)),
+      parseInt('0x' + this._hexa.slice(5, 7)),
+      parseFloat(parseInt('0x' + this._hexa.slice(7, 9)) / 255)
+    )
   }
 
   toRgb() {
@@ -250,25 +289,32 @@ class HEXA {
   }
 }
 
+function value2Binary(value) {
+  if (isString(value) && value.endsWith('%')) {
+    return Math.round((255 * parseInt(value)) / 100)
+  }
+  return parseInt(value)
+}
+
 /**
- * rgb/rgba色值转为rgba对象
- * @param {string} rgba rgb(255,0,0)/rgba(255,0,0,.5)
- * @returns RGBA
+ * rgb/rgba色值转为RGBA对象
+ * @param {string|{r:Number,g:Number,b:Number,a?:Number}} rgba rgb(255,0,0)/rgba(255,0,0,.5)
  */
 export function rgba2RGBA(rgba) {
-  if (!isRgba(rgba)) {
+  let matches
+
+  if (
+    isObject(rgba) &&
+    isNumber(rgba.r) &&
+    isNumber(rgba.g) &&
+    isNumber(rgba.b)
+  ) {
+    matches = [null, rgba.r, rgba.g, rgba.b, isNumeric(rgba.a) ? rgba.a : 1]
+  } else if (isRgba(rgba)) {
+    matches = rgbaReg.exec(rgba.trim())
+  } else {
     throw new Error('It is not a valid rgb/rgba string')
   }
-
-  function value2Binary(value) {
-    if (value.indexOf('%') !== -1) {
-      return Math.round((255 * parseInt(value)) / 100)
-    }
-    return parseInt(value)
-  }
-
-  const matches = rgbaReg.exec(rgba.trim())
-  window.console.log(matches)
 
   const rgbaMap = new RGBA(
     value2Binary(matches[1]),
@@ -281,19 +327,15 @@ export function rgba2RGBA(rgba) {
 }
 
 /**
- * hex/hexa色值转为rgba对象
+ * hex/hexa色值转为HEXA对象
  * @param {string} hex #ff0000/#ff000080
- * @returns RGBA
  */
-export function hexa2RGBA(hexa) {
+export function hexa2HEXA(hexa) {
   if (!isHexa(hexa)) {
     throw new Error('It is not a valid hex/hexa string')
   }
 
-  let rH,
-    gH,
-    bH,
-    aH = 'ff'
+  let rH, gH, bH, aH
 
   hexa = hexa.trim()
 
@@ -310,61 +352,53 @@ export function hexa2RGBA(hexa) {
 
   if (hexa.length === 9) {
     aH = hexa.slice(7, 9)
+  } else {
+    aH = 'ff'
   }
 
-  return new RGBA(
-    parseInt('0x' + rH),
-    parseInt('0x' + gH),
-    parseInt('0x' + bH),
-    parseFloat(parseInt('0x' + aH), 255)
-  )
+  return new HEXA(`#${rH}${gH}${bH}${aH}`.toUpperCase())
+}
+
+function hue2rgb(p1, p2, hue) {
+  if (hue < 0) hue += 1
+  if (hue > 1) hue -= 1
+  if (6 * hue < 1) return p1 + (p2 - p1) * 6 * hue
+  if (2 * hue < 1) return p2
+  if (3 * hue < 2) return p1 + (p2 - p1) * (2 / 3 - hue) * 6
+  return p1
+}
+
+function percentageToRangeBetween0And1(value) {
+  if (isString(value) && value.endsWith('%')) {
+    return parseFloat(value) / 100
+  }
+
+  return numberRange(parseFloat(value))
 }
 
 /**
- * hsl/hsla色值转为rgba对象
- * @param {string} hsla hsl(0,100%,50%)/hsla(0,100%,50%,0.5)
- * @returns RGBA
+ * hsl/hsla色值转为HSLA对象
+ * @param {String|{h:Number,s:String|Number,l:String|Number,a?:Number}} hsla 颜色值
  */
-export function hsla2RGBA(hsla) {
-  if (!isHsla(hsla)) {
+export function hsla2HSLA(hsla) {
+  let matches
+
+  if (
+    isObject(hsla) &&
+    isNumber(hsla.h) &&
+    isNumeric(hsla.s) &&
+    isNumeric(hsla.l)
+  ) {
+    matches = [null, hsla.h, hsla.s, hsla.l, isNumeric(hsla.a) ? hsla.a : 1]
+  } else if (isHsla(hsla)) {
+    matches = hslaReg.exec(hsla.trim())
+  } else {
     throw new Error('It is not a valid hsl/hsla string')
   }
 
-  const matches = hslaReg.exec(hsla.trim())
-  const h = parseInt(matches[1]) / 360
+  const h = parseFloat(matches[1]) / 360
+  const s = percentageToRangeBetween0And1(matches[2])
+  const l = percentageToRangeBetween0And1(matches[3])
 
-  let s
-  if (matches[2].indexOf('%') !== -1) {
-    s = parseInt(matches[2]) / 100
-  } else {
-    s = parseFloat(matches[2])
-  }
-  let l
-  if (matches[3].indexOf('%') !== -1) {
-    l = parseInt(matches[3]) / 100
-  } else {
-    l = parseFloat(matches[3])
-  }
-
-  function hue2rgb(p, q, t) {
-    if (t < 0) t += 1
-    if (t > 1) t -= 1
-    if (t < 1 / 6) return p + (q - p) * 6 * t
-    if (t < 1 / 2) return q
-    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6
-    return p
-  }
-
-  let r, g, b
-  if (s == 0) {
-    r = g = b = l
-  } else {
-    const q = l < 0.5 ? l * (1 + s) : l + s - l * s
-    const p = 2 * l - q
-    r = hue2rgb(p, q, h + 1 / 3)
-    g = hue2rgb(p, q, h)
-    b = hue2rgb(p, q, h - 1 / 3)
-  }
-
-  return new RGBA(r * 255, g * 255, b * 255, matches[4])
+  return new HSLA(h, s, l, matches[4])
 }

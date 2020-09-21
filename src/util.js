@@ -7,6 +7,14 @@ export function isNumber(object) {
 }
 
 /**
+ * 是否数值/可转为数值，如'1.1'，这里会对排除无穷大/无穷小的情况
+ * @param {any} object 值
+ */
+export function isNumeric(object) {
+  return object != null && !isNaN(parseFloat(object))
+}
+
+/**
  * 是否字符串
  * @param {any} object 值
  */
@@ -49,7 +57,7 @@ export function isLimitPercentage(object, min = 0, max = 100) {
  * @param {Number} num 数值
  * @param {Number} width 多少位
  */
-export function num2Hex(num, width) {
+export function decimal2Hex(num, width) {
   num = Math.round(num * 255)
 
   let hex = '0123456789abcdef'
@@ -67,4 +75,14 @@ export function num2Hex(num, width) {
     padding += '0'
   }
   return padding + s
+}
+
+/**
+ * 数值限定范围
+ * @param {Number} value
+ * @param {Number} min
+ * @param {Number} max
+ */
+export function numberRange(value, min = 0, max = 1) {
+  return Math.min(max, Math.max(min, value))
 }
