@@ -109,31 +109,122 @@ function _hsl2rgb(h, s, l) {
 function _parseAlpha(value) {
   let opacity = 1
   if (isNumeric(value)) {
-    return percentageToRangeBetween0And1(value)
+    return numberRange(percentage2Value(value))
   }
 
   return opacity
 }
 
 /**
- * Rgba结构对象
+ * 计算灰阶值
+ * @param {Number} r red
+ * @param {Number} g green
+ * @param {Number} b blue
+ * @see https://www.cnblogs.com/zhangjiansheng/p/6925722.html
+ */
+function rgb2Gray(r, g, b) {
+  // 著名的心理学公式
+  // return (r * 299 + g * 587 + b * 114) / 1000
+  return (r * 38 + g * 75 + b * 15) >> 7
+}
+
+/**
+ * RGBA 构造
  */
 class RGBA {
   constructor(r, g, b, a) {
-    this.r = r
-    this.g = g
-    this.b = b
+    this._r = r
+    this._g = g
+    this._b = b
     this.alpha(a)
   }
 
+  red(value) {
+    this._r = parseInt(numberRange(value, 0, 255))
+    return this
+  }
+
+  green(value) {
+    this._g = parseInt(numberRange(value, 0, 255))
+    return this
+  }
+
+  blue(value) {
+    this._b = parseInt(numberRange(value, 0, 255))
+    return this
+  }
+
+  /**
+   * 设置透明度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
   alpha(value) {
-    this.a = _parseAlpha(value)
+    this._a = _parseAlpha(value)
+    return this
+  }
+
+  /**
+   * 增加透明度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  fade(ratio) {
+    if (isNumber(ratio)) {
+      this._a = numberRange(this._a * (1 - percentage2Value(ratio)))
+    }
+    return this
+  }
+
+  /**
+   * 降低透明度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  opaque(ratio) {
+    if (isNumber(ratio)) {
+      this._a = numberRange(this._a * (1 + percentage2Value(ratio)))
+    }
+    return this
+  }
+
+  /**
+   * 负片
+   */
+  negate() {
+    this._r = 255 - this._r
+    this._g = 255 - this._g
+    this._b = 255 - this._b
+
+    return this
+  }
+
+  /**
+   * 灰阶
+   */
+  grayscale() {
+    const gray = Math.ceil(rgb2Gray(this._r, this._g, this._b))
+
+    this._r = gray
+    this._g = gray
+    this._b = gray
+
+    return this
+  }
+
+  isLight() {
+    return !this.isDark()
+  }
+
+  /**
+   * 是否深色调
+   * @see YIQ equation from http://24ways.org/2010/calculating-color-contrast
+   */
+  isDark() {
+    return rgb2Gray(this._r, this._g, this._b) < 128
   }
 
   hsla() {
-    const { h, s, l } = _rgb2hsl(this.r, this.g, this.b)
+    const { h, s, l } = _rgb2hsl(this._r, this._g, this._b)
 
-    return new HSLA(h, s, l, this.a)
+    return new HSLA(h, s, l, this._a)
   }
 
   toHsl() {
@@ -145,7 +236,9 @@ class RGBA {
   }
 
   hexa() {
-    return new HEXA(_rgb2hex(this.r, this.g, this.b) + decimal2Hex(this.a, 2))
+    return new HEXA(
+      _rgb2hex(this._r, this._g, this._b) + decimal2Hex(this._a, 2)
+    )
   }
 
   toHex() {
@@ -157,11 +250,11 @@ class RGBA {
   }
 
   toRgb() {
-    return `rgb(${this.r}, ${this.g}, ${this.b})`
+    return `rgb(${this._r}, ${this._g}, ${this._b})`
   }
 
   toRgba() {
-    return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})`
+    return `rgba(${this._r}, ${this._g}, ${this._b}, ${this._a})`
   }
 
   toString() {
@@ -169,6 +262,9 @@ class RGBA {
   }
 }
 
+/**
+ * HSLA 构造
+ */
 class HSLA {
   constructor(h, s, l, a) {
     this._h = h
@@ -177,15 +273,110 @@ class HSLA {
     this.alpha(a)
   }
 
-  alpha(value) {
-    this._a = _parseAlpha(value)
+  /**
+   * 设置色相
+   * @param {Number} deg 角度值
+   */
+  hue(deg) {
+    this._h = parseInt(numberRange(deg, 0, 360)) / 360
+    return this
   }
 
+  /**
+   * 设置饱和度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  saturation(value) {
+    this._s = percentage2Value(value)
+    return this
+  }
+
+  /**
+   * 设置亮度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  lightness(value) {
+    this._l = percentage2Value(value)
+    return this
+  }
+
+  /**
+   * 设置透明度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  alpha(value) {
+    this._a = _parseAlpha(value)
+    return this
+  }
+
+  /**
+   * 调整色相
+   * @param {Number} deg 加权角度值
+   */
   rotate(deg) {
     if (isNumber(deg)) {
       this._h = ((this._h * 360 + deg + 360) % 360) / 360
     }
     return this
+  }
+
+  /**
+   * 增加饱和度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  saturate(ratio) {
+    if (isNumber(ratio)) {
+      this._s = numberRange(this._s * (1 + percentage2Value(ratio)))
+    }
+    return this
+  }
+
+  /**
+   * 降低饱和度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  desaturate(ratio) {
+    if (isNumber(ratio)) {
+      this._s = numberRange(this._s * (1 - percentage2Value(ratio)))
+    }
+    return this
+  }
+
+  /**
+   * 增加亮度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  lighten(ratio) {
+    if (isNumber(ratio)) {
+      this._l = numberRange(this._l * (1 + percentage2Value(ratio)))
+    }
+    return this
+  }
+
+  /**
+   * 降低亮度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  darken(ratio) {
+    if (isNumber(ratio)) {
+      this._l = numberRange(this._l * (1 - percentage2Value(ratio)))
+    }
+    return this
+  }
+
+  /**
+   * 灰阶
+   */
+  grayscale() {
+    return this.rgba().grayscale().hsla()
+  }
+
+  isLight() {
+    return this.rgba().isLight()
+  }
+
+  isDark() {
+    return this.rgba().isDark()
   }
 
   rgba() {
@@ -245,6 +436,21 @@ class HEXA {
       this._hexa = hexa
       this._hex = hexa.slice(0, 7)
     }
+  }
+
+  /**
+   * 灰阶
+   */
+  grayscale() {
+    return this.rgba().grayscale().hexa()
+  }
+
+  isLight() {
+    return this.rgba().isLight()
+  }
+
+  isDark() {
+    return this.rgba().isDark()
   }
 
   rgba() {
@@ -368,12 +574,12 @@ function hue2rgb(p1, p2, hue) {
   return p1
 }
 
-function percentageToRangeBetween0And1(value) {
+function percentage2Value(value) {
   if (isString(value) && value.endsWith('%')) {
     return parseFloat(value) / 100
   }
 
-  return numberRange(parseFloat(value))
+  return parseFloat(value)
 }
 
 /**
@@ -396,9 +602,9 @@ export function hsla2HSLA(hsla) {
     throw new Error('It is not a valid hsl/hsla string')
   }
 
-  const h = parseFloat(matches[1]) / 360
-  const s = percentageToRangeBetween0And1(matches[2])
-  const l = percentageToRangeBetween0And1(matches[3])
+  const h = parseInt(matches[1]) / 360
+  const s = numberRange(percentage2Value(matches[2]))
+  const l = numberRange(percentage2Value(matches[3]))
 
   return new HSLA(h, s, l, matches[4])
 }

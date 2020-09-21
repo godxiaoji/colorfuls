@@ -65,6 +65,32 @@ describe('Color', () => {
   })
 
   describe('Manipulation', () => {
+    // rgba
+    it('rgba.negate(): rgb(0, 100, 255) -> rgb(255, 155, 0)', () => {
+      assert.strictEqual(
+        Color('rgb(0, 100, 255)').negate().toRgb(),
+        'rgb(255, 155, 0)'
+      )
+    })
+    it('rgba.fade(): rgba(10, 10, 10, 0.8) -> rgba(10, 10, 10, 0.4)', () => {
+      assert.strictEqual(
+        Color('rgba(10, 10, 10, 0.8)').fade(0.5).toRgba(),
+        'rgba(10, 10, 10, 0.4)'
+      )
+    })
+    it('rgba.opaque(): rgba(10, 10, 10, 0.8) -> rgba(10, 10, 10, 1)', () => {
+      assert.strictEqual(
+        Color('rgba(10, 10, 10, 0.8)').opaque(0.5).toRgba(),
+        'rgba(10, 10, 10, 1)'
+      )
+    })
+
+    // hexa
+    it('hexa.grayscale(): #5CBF54 -> #959595', () => {
+      assert.strictEqual(Color('#5CBF54').grayscale().toHex(), '#959595')
+    })
+
+    // hsla
     it('hsla.rotate(180): hsl(60, 20%, 20%) -> hsl(240, 20%, 20%)', () => {
       assert.strictEqual(
         Color('hsl(60, 20%, 20%)').rotate(180).toHsl(),
@@ -75,6 +101,30 @@ describe('Color', () => {
       assert.strictEqual(
         Color('hsl(60, 20%, 20%)').rotate(-90).toHsl(),
         'hsl(330, 20%, 20%)'
+      )
+    })
+    it('hsla.saturate(0.5): hsl(100, 50%, 50%) -> hsl(100, 75%, 50%)', () => {
+      assert.strictEqual(
+        Color('hsl(100, 50%, 50%)').saturate(0.5).toHsl(),
+        'hsl(100, 75%, 50%)'
+      )
+    })
+    it('hsla.desaturate(0.5): hsl(100, 50%, 50%) -> hsl(100, 25%, 50%)', () => {
+      assert.strictEqual(
+        Color('hsl(100, 50%, 50%)').desaturate(0.5).toHsl(),
+        'hsl(100, 25%, 50%)'
+      )
+    })
+    it('hsla.lighten(0.5): hsl(100, 50%, 50%) -> hsl(100, 50%, 75%)', () => {
+      assert.strictEqual(
+        Color('hsl(100, 50%, 50%)').lighten(0.5).toHsl(),
+        'hsl(100, 50%, 75%)'
+      )
+    })
+    it('hsla.darken(0.5): hsl(100, 50%, 50%) -> hsl(100, 50%, 25%)', () => {
+      assert.strictEqual(
+        Color('hsl(100, 50%, 50%)').darken(0.5).toHsl(),
+        'hsl(100, 50%, 25%)'
       )
     })
   })
