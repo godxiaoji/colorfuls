@@ -13,7 +13,9 @@ const {
   rgb2hsl,
   hsl2Rgb,
   hsl2Hex,
-  mix
+  mix,
+  gradient,
+  linearGradient
 } = require('../dist/colorful')
 
 describe('Color', () => {
@@ -146,6 +148,31 @@ describe('Color', () => {
       assert.strictEqual(
         mix('rgba(255, 0, 0, 0.5)', '#00f').toRgba(),
         'rgba(63, 0, 191, 0.75)'
+      )
+    })
+  })
+
+  // gradient
+  describe('Gradient', () => {
+    it(`gradient(#000, #fff).step(0.5) -> #808080`, () => {
+      assert.strictEqual(gradient('#000', '#fff').step(0.5).toHex(), '#808080')
+    })
+    it(`gradient(#000, #fff).steps(3) -> #000000, #808080, #FFFFFF`, () => {
+      assert.strictEqual(
+        gradient('#000', '#fff').steps(3).toHexs().join(', '),
+        '#000000, #808080, #FFFFFF'
+      )
+    })
+    it(`linearGradient(#000, #fff, #000).steps(3) -> #000000, #FFFFFF, #000000`, () => {
+      assert.strictEqual(
+        linearGradient('#000', '#fff', '#000').steps(3).toHexs().join(', '),
+        '#000000, #FFFFFF, #000000'
+      )
+    })
+    it(`linearGradient(#000, #fff, #000).steps(5) -> #000000, #808080, #FFFFFF, #808080, #000000`, () => {
+      assert.strictEqual(
+        linearGradient('#000', '#fff', '#000').steps(5).toHexs().join(', '),
+        '#000000, #808080, #FFFFFF, #808080, #000000'
       )
     })
   })

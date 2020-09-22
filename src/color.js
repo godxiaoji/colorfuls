@@ -135,6 +135,13 @@ function rgb2Gray(r, g, b) {
  * RGBA 构造
  */
 class RGBA {
+  /**
+   * 构造器
+   * @param {Number} r 红色通道
+   * @param {Number} g 绿色通道
+   * @param {Number} b 蓝色通道
+   * @param {Number|String} a 透明通道
+   */
   constructor(r, g, b, a) {
     this._r = r
     this._g = g
@@ -302,12 +309,23 @@ class RGBA {
   toString() {
     return this.toRgba()
   }
+
+  toArray() {
+    return [this._r, this._g, this._b, this._a]
+  }
 }
 
 /**
  * HSLA 构造
  */
 class HSLA {
+  /**
+   * 构造器
+   * @param {Number} h 色相 0-360
+   * @param {Number} s 饱和度 0-100%
+   * @param {Number} l 亮度 0-100%
+   * @param {Number} a 透明通道
+   */
   constructor(h, s, l, a) {
     this._h = h
     this._s = s
@@ -691,6 +709,22 @@ export function hsla2HSLA(hsla) {
   const l = numberRange(percentage2Value(matches[3]))
 
   return new HSLA(h, s, l, matches[4])
+}
+
+/**
+ * 克隆颜色对象
+ * @param {RGBA|RGBA|HEXA} object
+ */
+export function clone(object) {
+  if (object instanceof RGBA) {
+    return new RGBA(object._r, object._g, object._b, object._a)
+  } else if (object instanceof HSLA) {
+    return new HSLA(object._h, object._s, object._l, object._a)
+  } else if (object instanceof HEXA) {
+    return new HEXA(object._hexa)
+  }
+
+  return object
 }
 
 /**

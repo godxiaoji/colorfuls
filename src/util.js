@@ -31,6 +31,14 @@ export function isObject(object) {
 }
 
 /**
+ * 是否数组
+ * @param {any} object 值
+ */
+export function isArray(object) {
+  return Array.isArray(object)
+}
+
+/**
  * 是否undefined
  * @param {any} object 值
  */

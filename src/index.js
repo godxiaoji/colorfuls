@@ -1,5 +1,6 @@
 import { rgba2RGBA, hexa2HEXA, hsla2HSLA, Color } from './color'
 import mix from './mix'
+import gradient, { linearGradient } from './gradient'
 
 export default Color
 
@@ -51,4 +52,4 @@ export function hsl2Hex(hsl) {
   return hsla2HSLA(hsl).toHex()
 }
 
-export { mix }
+export { mix, gradient, linearGradient }
