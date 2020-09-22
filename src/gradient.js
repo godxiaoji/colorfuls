@@ -1,5 +1,5 @@
 import { clone, Color } from './color'
-import { isArray, numberRange, percentage2Value } from './util'
+import { isArray, numberRange, percentage2Length } from './util'
 import Big from 'big.js/big.mjs'
 
 function color2Array(color, gamma) {
@@ -45,7 +45,7 @@ function getStepColor(p, colors, gamma) {
     r: parseInt(arr[0]),
     g: parseInt(arr[1]),
     b: parseInt(arr[2]),
-    a: parseFloat(arr[3])
+    a: arr[3]
   })
 }
 
@@ -60,7 +60,7 @@ function parseColors(args) {
     if (isArray(args[i])) {
       item.color = Color(args[i][0]).rgba()
       item.percentage = new Big(
-        numberRange(percentage2Value(args[i][1]), minPercentage, 1)
+        numberRange(percentage2Length(args[i][1]), minPercentage, 1)
       )
     } else {
       item.color = Color(args[i]).rgba()
@@ -160,7 +160,7 @@ class Gradient {
   }
 
   step(value) {
-    const p = numberRange(percentage2Value(value))
+    const p = numberRange(percentage2Length(value))
 
     return getStepColor(p, this.colors, this.gamma)
   }

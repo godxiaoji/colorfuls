@@ -6,9 +6,11 @@ import {
   decimal2Hex,
   numberRange,
   isLimitPercentage,
-  percentage2Value,
-  isUndefined
+  percentage2Length,
+  isUndefined,
+  bigNumberRange
 } from './util'
+import Big from 'big.js/big.mjs'
 
 // PS：不会写比较骚的正则，这个虽然长，但是容易看懂
 const hexaReg = /^#([0-9a-f]{8}|[0-9a-f]{6}|[0-9a-f]{3});?$/i
@@ -109,13 +111,30 @@ function _hsl2rgb(h, s, l) {
   }
 }
 
-function _parseAlpha(value) {
+function parseAlpha(value) {
   let opacity = 1
-  if (isNumeric(value)) {
-    return numberRange(percentage2Value(value))
+
+  if (isBig(value)) {
+    return value
   }
 
-  return opacity
+  if (isNumeric(value)) {
+    opacity = numberRange(percentage2Length(value))
+  }
+
+  return new Big(opacity)
+}
+
+function fadeOut(alpha, ratio) {
+  return bigNumberRange(alpha.times(new Big(1).minus(percentage2Length(ratio))))
+}
+
+function fadeIn(alpha, ratio) {
+  return bigNumberRange(alpha.times(new Big(1).plus(percentage2Length(ratio))))
+}
+
+function isBig(object) {
+  return object instanceof Big
 }
 
 /**
@@ -198,9 +217,9 @@ class RGBA {
    */
   alpha(value) {
     if (isUndefined(value)) {
-      return this._a
+      return parseFloat(this._a)
     } else {
-      this._a = _parseAlpha(value)
+      this._a = parseAlpha(value)
     }
     return this
   }
@@ -209,10 +228,8 @@ class RGBA {
    * 增加透明度
    * @param {Number|String} ratio 比值 0.5/50%
    */
-  fade(ratio) {
-    if (isNumber(ratio)) {
-      this._a = numberRange(this._a * (1 - percentage2Value(ratio)))
-    }
+  fadeOut(ratio) {
+    this._a = fadeOut(this._a, ratio)
     return this
   }
 
@@ -220,11 +237,25 @@ class RGBA {
    * 降低透明度
    * @param {Number|String} ratio 比值 0.5/50%
    */
-  opaque(ratio) {
-    if (isNumber(ratio)) {
-      this._a = numberRange(this._a * (1 + percentage2Value(ratio)))
-    }
+  fadeIn(ratio) {
+    this._a = fadeIn(this._a, ratio)
     return this
+  }
+
+  /**
+   * 增加透明度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  fade(ratio) {
+    return this.fadeOut(ratio)
+  }
+
+  /**
+   * 降低透明度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  opaque(ratio) {
+    return this.fadeIn(ratio)
   }
 
   /**
@@ -249,7 +280,7 @@ class RGBA {
    * 灰阶
    */
   grayscale() {
-    const gray = Math.ceil(rgb2Gray(this._r, this._g, this._b))
+    const gray = Math.round(rgb2Gray(this._r, this._g, this._b))
 
     this._r = gray
     this._g = gray
@@ -303,7 +334,7 @@ class RGBA {
   }
 
   toRgba() {
-    return `rgba(${this._r}, ${this._g}, ${this._b}, ${this._a})`
+    return `rgba(${this._r}, ${this._g}, ${this._b}, ${this.alpha()})`
   }
 
   toString() {
@@ -311,7 +342,7 @@ class RGBA {
   }
 
   toArray() {
-    return [this._r, this._g, this._b, this._a]
+    return [this._r, this._g, this._b, this.alpha()]
   }
 }
 
@@ -358,7 +389,7 @@ class HSLA {
     if (isUndefined(value)) {
       return Math.round(this._s * 100) + '%'
     } else if (isNumeric(value)) {
-      this._s = percentage2Value(value)
+      this._s = percentage2Length(value)
     }
     return this
   }
@@ -371,7 +402,7 @@ class HSLA {
     if (isUndefined(value)) {
       return Math.round(this._l * 100) + '%'
     } else if (isNumeric(value)) {
-      this._l = percentage2Value(value)
+      this._l = percentage2Length(value)
     }
     return this
   }
@@ -384,9 +415,43 @@ class HSLA {
     if (isUndefined(value)) {
       return this._a
     } else {
-      this._a = _parseAlpha(value)
+      this._a = parseAlpha(value)
     }
     return this
+  }
+
+  /**
+   * 增加透明度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  fadeOut(ratio) {
+    this._a = fadeOut(this._a, ratio)
+    return this
+  }
+
+  /**
+   * 降低透明度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  fadeIn(ratio) {
+    this._a = fadeIn(this._a, ratio)
+    return this
+  }
+
+  /**
+   * 增加透明度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  fade(ratio) {
+    return this.fadeOut(ratio)
+  }
+
+  /**
+   * 降低透明度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  opaque(ratio) {
+    return this.fadeIn(ratio)
   }
 
   /**
@@ -406,7 +471,7 @@ class HSLA {
    */
   saturate(ratio) {
     if (isNumber(ratio)) {
-      this._s = numberRange(this._s * (1 + percentage2Value(ratio)))
+      this._s = numberRange(this._s * (1 + percentage2Length(ratio)))
     }
     return this
   }
@@ -417,7 +482,7 @@ class HSLA {
    */
   desaturate(ratio) {
     if (isNumber(ratio)) {
-      this._s = numberRange(this._s * (1 - percentage2Value(ratio)))
+      this._s = numberRange(this._s * (1 - percentage2Length(ratio)))
     }
     return this
   }
@@ -428,7 +493,7 @@ class HSLA {
    */
   lighten(ratio) {
     if (isNumber(ratio)) {
-      this._l = numberRange(this._l * (1 + percentage2Value(ratio)))
+      this._l = numberRange(this._l * (1 + percentage2Length(ratio)))
     }
     return this
   }
@@ -439,7 +504,7 @@ class HSLA {
    */
   darken(ratio) {
     if (isNumber(ratio)) {
-      this._l = numberRange(this._l * (1 - percentage2Value(ratio)))
+      this._l = numberRange(this._l * (1 - percentage2Length(ratio)))
     }
     return this
   }
@@ -705,8 +770,8 @@ export function hsla2HSLA(hsla) {
   }
 
   const h = parseInt(matches[1]) / 360
-  const s = numberRange(percentage2Value(matches[2]))
-  const l = numberRange(percentage2Value(matches[3]))
+  const s = numberRange(percentage2Length(matches[2]))
+  const l = numberRange(percentage2Length(matches[3]))
 
   return new HSLA(h, s, l, matches[4])
 }

@@ -1,5 +1,5 @@
 import { rgba2RGBA, Color } from './color'
-import { isUndefined, numberRange, percentage2Value } from './util'
+import { isUndefined, numberRange, percentage2Length } from './util'
 
 /**
  * 混合颜色
@@ -12,7 +12,7 @@ export default function mix(color1, color2, weight) {
   const c1 = Color(color1).rgba()
   const c2 = Color(color2).rgba()
 
-  const p = isUndefined(weight) ? 0.5 : numberRange(percentage2Value(weight))
+  const p = isUndefined(weight) ? 0.5 : numberRange(percentage2Length(weight))
   const w = 2 * p - 1
   const a = c1.alpha() - c2.alpha()
   const w1 = ((w * a === -1 ? w : (w + a) / (1 + w * a)) + 1) / 2.0

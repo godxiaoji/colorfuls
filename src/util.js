@@ -1,3 +1,5 @@
+import Big from 'big.js/big.mjs'
+
 /**
  * 是否数值，这里会对排除无穷大/无穷小的情况
  * @param {any} object 值
@@ -104,10 +106,26 @@ export function numberRange(value, min = 0, max = 1) {
 }
 
 /**
+ * 数值限定范围
+ * @param {Big} value
+ * @param {Number} min
+ * @param {Number} max
+ */
+export function bigNumberRange(value, min = 0, max = 1) {
+  if (value.gt(max)) {
+    return new Big(max)
+  } else if (value.lt(min)) {
+    return new Big(min)
+  }
+
+  return value
+}
+
+/**
  * 百分比转数值0-1
  * @param {String|number} value 100%/0.1
  */
-export function percentage2Value(value) {
+export function percentage2Length(value) {
   if (isString(value) && value.endsWith('%')) {
     return parseFloat(value) / 100
   }
