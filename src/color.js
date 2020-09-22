@@ -424,7 +424,7 @@ class HSLA {
    */
   alpha(value) {
     if (isUndefined(value)) {
-      return this._a
+      return parseFloat(this._a)
     } else {
       this._a = parseAlpha(value)
     }
