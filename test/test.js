@@ -141,7 +141,7 @@ describe('Color', () => {
     it(`mix(#f00, #00f) -> #7F007F`, () => {
       assert.strictEqual(mix('#f00', '#00f').toHex(), '#7F007F')
     })
-    it(`mix(#f00, #00f, 25%) -> #7F007F`, () => {
+    it(`mix(#f00, #00f, 25%) -> #3F00BF`, () => {
       assert.strictEqual(mix('#f00', '#00f', '25%').toHex(), '#3F00BF')
     })
     it(`mix(rgba(255, 0, 0, 0.5), #00f) -> rgba(63, 0, 191, 0.75)`, () => {

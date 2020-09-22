@@ -699,21 +699,25 @@ export function rgba2RGBA(rgba) {
     isNumber(rgba.g) &&
     isNumber(rgba.b)
   ) {
-    matches = [null, rgba.r, rgba.g, rgba.b, isNumeric(rgba.a) ? rgba.a : 1]
+    matches = [
+      null,
+      rgba.r,
+      rgba.g,
+      rgba.b,
+      isBig(rgba.a) || isNumeric(rgba.a) ? rgba.a : 1
+    ]
   } else if (isRgba(rgba)) {
     matches = rgbaReg.exec(rgba.trim())
   } else {
     throw new Error('It is not a valid rgb/rgba string')
   }
 
-  const rgbaMap = new RGBA(
+  return new RGBA(
     value2Binary(matches[1]),
     value2Binary(matches[2]),
     value2Binary(matches[3]),
     matches[4]
   )
-
-  return rgbaMap
 }
 
 /**
