@@ -21,7 +21,10 @@ function getStepColor(p, colors, gamma) {
       const prevItem = colors[i - 1]
       start = color2Array(prevItem.color, gamma)
       end = color2Array(item.color, gamma)
-      p = (p - prevItem.percentage) / (item.percentage - prevItem.percentage)
+
+      p = p
+        .minus(prevItem.percentage)
+        .div(item.percentage.minus(prevItem.percentage))
       break
     }
   }
@@ -152,7 +155,9 @@ class Gradient {
 
     if (len >= 2) {
       for (let i = 0; i < len; i++) {
-        output.push(getStepColor(i / (len - 1), this.colors, this.gamma))
+        output.push(
+          getStepColor(new Big(i).div(len - 1), this.colors, this.gamma)
+        )
       }
     }
 
@@ -162,7 +167,7 @@ class Gradient {
   step(value) {
     const p = numberRange(percentage2Length(value))
 
-    return getStepColor(p, this.colors, this.gamma)
+    return getStepColor(new Big(p), this.colors, this.gamma)
   }
 }
 
