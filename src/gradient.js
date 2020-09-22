@@ -20,11 +20,9 @@ function getStepColor(p, colors, gamma) {
       const prevItem = colors[i - 1]
       start = color2Array(prevItem.color, gamma)
       end = color2Array(item.color, gamma)
-      console.log(
-        p - prevItem.percentage,
-        item.percentage - prevItem.percentage
-      )
+
       p = (p - prevItem.percentage) / (item.percentage - prevItem.percentage)
+
       break
     }
   }
@@ -40,16 +38,7 @@ function getStepColor(p, colors, gamma) {
       arr[i] = Math.round(channel * 255)
     }
   }
-  console.log(
-    p,
-    arr,
-    rgba2RGBA({
-      r: arr[0],
-      g: arr[1],
-      b: arr[2],
-      a: arr[3]
-    }).toHexa()
-  )
+
   return rgba2RGBA({
     r: arr[0],
     g: arr[1],

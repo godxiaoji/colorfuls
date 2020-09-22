@@ -666,7 +666,7 @@ function value2Binary(value) {
   if (isString(value) && value.endsWith('%')) {
     return Math.round((255 * parseInt(value)) / 100)
   }
-  return parseInt(value)
+  return Math.round(value)
 }
 
 /**
