@@ -1,36 +1,7 @@
-import {
-  rgba2RGBA,
-  hexa2HEXA,
-  hsla2HSLA,
-  isHexa,
-  isRgba,
-  isHsla
-} from './color'
-import { isLimitPercentage, isNumber, isObject } from './util'
+import { rgba2RGBA, hexa2HEXA, hsla2HSLA, Color } from './color'
+import mix from './mix'
 
-/**
- * 颜色构造器
- * @param {String|{r:Number,g:Number,b:Number,a?:Number}|{h:Number,s:string,l:string,a?:Number}} value 颜色值
- */
-export default function Color(value) {
-  if (isObject(value)) {
-    if (isNumber(value.r) && isNumber(value.g) && isNumber(value.b)) {
-      return rgba2RGBA(value)
-    } else if (
-      isNumber(value.h) &&
-      isLimitPercentage(value.s) &&
-      isLimitPercentage(value.l)
-    ) {
-      return hsla2HSLA(value)
-    }
-  } else if (isHexa(value)) {
-    return hexa2HEXA(value)
-  } else if (isRgba(value)) {
-    return rgba2RGBA(value)
-  } else if (isHsla(value)) {
-    return hsla2HSLA(value)
-  } 
-}
+export default Color
 
 export function rgba2hexa(rgba) {
   return rgba2RGBA(rgba).toHexa()
@@ -79,3 +50,5 @@ export function hsl2Rgb(hsl) {
 export function hsl2Hex(hsl) {
   return hsla2HSLA(hsl).toHex()
 }
+
+export { mix }

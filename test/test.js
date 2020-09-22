@@ -12,7 +12,8 @@ const {
   rgb2hex,
   rgb2hsl,
   hsl2Rgb,
-  hsl2Hex
+  hsl2Hex,
+  mix
 } = require('../dist/colorful')
 
 describe('Color', () => {
@@ -129,6 +130,22 @@ describe('Color', () => {
       assert.strictEqual(
         Color('hsl(100, 50%, 50%)').darken(0.5).toHsl(),
         'hsl(100, 50%, 25%)'
+      )
+    })
+  })
+
+  // mix
+  describe('Mix', () => {
+    it(`mix(#f00, #00f) -> #7F007F`, () => {
+      assert.strictEqual(mix('#f00', '#00f').toHex(), '#7F007F')
+    })
+    it(`mix(#f00, #00f, 25%) -> #7F007F`, () => {
+      assert.strictEqual(mix('#f00', '#00f', '25%').toHex(), '#3F00BF')
+    })
+    it(`mix(rgba(255, 0, 0, 0.5), #00f) -> rgba(63, 0, 191, 0.75)`, () => {
+      assert.strictEqual(
+        mix('rgba(255, 0, 0, 0.5)', '#00f').toRgba(),
+        'rgba(63, 0, 191, 0.75)'
       )
     })
   })

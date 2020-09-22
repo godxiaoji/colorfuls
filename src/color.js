@@ -4,7 +4,10 @@ import {
   isObject,
   isString,
   decimal2Hex,
-  numberRange
+  numberRange,
+  isLimitPercentage,
+  percentage2Value,
+  isUndefined
 } from './util'
 
 // PS：不会写比较骚的正则，这个虽然长，但是容易看懂
@@ -139,27 +142,59 @@ class RGBA {
     this.alpha(a)
   }
 
-  red(value) {
-    this._r = parseInt(numberRange(value, 0, 255))
-    return this
-  }
-
-  green(value) {
-    this._g = parseInt(numberRange(value, 0, 255))
-    return this
-  }
-
-  blue(value) {
-    this._b = parseInt(numberRange(value, 0, 255))
+  rgba() {
     return this
   }
 
   /**
-   * 设置透明度
+   * 获取/设置红色通道
+   * @param {Number} value
+   */
+  red(value) {
+    if (isUndefined(value)) {
+      return this._r
+    } else if (isNumber(value)) {
+      this._r = parseInt(numberRange(value, 0, 255))
+    }
+    return this
+  }
+
+  /**
+   * 获取/设置绿色通道
+   * @param {Number} value
+   */
+  green(value) {
+    if (isUndefined(value)) {
+      return this._g
+    } else if (isNumber(value)) {
+      this._g = parseInt(numberRange(value, 0, 255))
+    }
+    return this
+  }
+
+  /**
+   * 获取/设置蓝色通道
+   * @param {Number} value
+   */
+  blue(value) {
+    if (isUndefined(value)) {
+      return this._b
+    } else if (isNumber(value)) {
+      this._b = parseInt(numberRange(value, 0, 255))
+    }
+    return this
+  }
+
+  /**
+   * 获取/设置透明度
    * @param {Number|String} ratio 比值 0.5/50%
    */
   alpha(value) {
-    this._a = _parseAlpha(value)
+    if (isUndefined(value)) {
+      return this._a
+    } else {
+      this._a = _parseAlpha(value)
+    }
     return this
   }
 
@@ -280,39 +315,59 @@ class HSLA {
     this.alpha(a)
   }
 
+  hsla() {
+    return this
+  }
+
   /**
-   * 设置色相
+   * 获取/设置色相
    * @param {Number} deg 角度值
    */
   hue(deg) {
-    this._h = parseInt(numberRange(deg, 0, 360)) / 360
+    if (isUndefined(deg)) {
+      return Math.round(this._h * 360)
+    } else if (isNumber(deg)) {
+      this._h = parseInt(numberRange(deg, 0, 360)) / 360
+    }
     return this
   }
 
   /**
-   * 设置饱和度
+   * 获取/设置饱和度
    * @param {Number|String} ratio 比值 0.5/50%
    */
   saturation(value) {
-    this._s = percentage2Value(value)
+    if (isUndefined(value)) {
+      return Math.round(this._s * 100) + '%'
+    } else if (isNumeric(value)) {
+      this._s = percentage2Value(value)
+    }
     return this
   }
 
   /**
-   * 设置亮度
+   * 获取/设置亮度
    * @param {Number|String} ratio 比值 0.5/50%
    */
   lightness(value) {
-    this._l = percentage2Value(value)
+    if (isUndefined(value)) {
+      return Math.round(this._l * 100) + '%'
+    } else if (isNumeric(value)) {
+      this._l = percentage2Value(value)
+    }
     return this
   }
 
   /**
-   * 设置透明度
+   * 获取/设置透明度
    * @param {Number|String} ratio 比值 0.5/50%
    */
   alpha(value) {
-    this._a = _parseAlpha(value)
+    if (isUndefined(value)) {
+      return this._a
+    } else {
+      this._a = _parseAlpha(value)
+    }
     return this
   }
 
@@ -427,15 +482,13 @@ class HSLA {
   }
 
   toHsl() {
-    return `hsl(${Math.round(this._h * 360)}, ${Math.round(
-      this._s * 100
-    )}%, ${Math.round(this._l * 100)}%)`
+    return `hsl(${this.hue()}, ${this.saturation()}, ${this.lightness()})`
   }
 
   toHsla() {
-    return `hsla(${Math.round(this._h * 360)}, ${Math.round(
-      this._s * 100
-    )}%, ${Math.round(this._l * 100)}%, ${this._a})`
+    return `hsla(${this.hue()}, ${this.saturation()}, ${this.lightness()}, ${
+      this._a
+    })`
   }
 
   toString() {
@@ -457,6 +510,10 @@ class HEXA {
       this._hexa = hexa
       this._hex = hexa.slice(0, 7)
     }
+  }
+
+  hexa() {
+    return this
   }
 
   /**
@@ -609,14 +666,6 @@ function hue2rgb(p1, p2, hue) {
   return p1
 }
 
-function percentage2Value(value) {
-  if (isString(value) && value.endsWith('%')) {
-    return parseFloat(value) / 100
-  }
-
-  return parseFloat(value)
-}
-
 /**
  * hsl/hsla色值转为HSLA对象
  * @param {String|{h:Number,s:String|Number,l:String|Number,a?:Number}} hsla 颜色值
@@ -643,3 +692,37 @@ export function hsla2HSLA(hsla) {
 
   return new HSLA(h, s, l, matches[4])
 }
+
+/**
+ * 颜色构造器
+ * @param {String|{r:Number,g:Number,b:Number,a?:Number}|{h:Number,s:string,l:string,a?:Number}} value 颜色值
+ */
+export function Color(value) {
+  if (isObject(value)) {
+    if (
+      value instanceof RGBA ||
+      value instanceof HSLA ||
+      value instanceof HEXA
+    ) {
+      return value
+    } else if (isNumber(value.r) && isNumber(value.g) && isNumber(value.b)) {
+      return rgba2RGBA(value)
+    } else if (
+      isNumber(value.h) &&
+      isLimitPercentage(value.s) &&
+      isLimitPercentage(value.l)
+    ) {
+      return hsla2HSLA(value)
+    }
+  } else if (isHexa(value)) {
+    return hexa2HEXA(value)
+  } else if (isRgba(value)) {
+    return rgba2RGBA(value)
+  } else if (isHsla(value)) {
+    return hsla2HSLA(value)
+  }
+
+  throw new Error('Invaild color value.')
+}
+
+export default Color

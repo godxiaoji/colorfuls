@@ -31,6 +31,14 @@ export function isObject(object) {
 }
 
 /**
+ * 是否undefined
+ * @param {any} object 值
+ */
+export function isUndefined(object) {
+  return typeof object === 'undefined'
+}
+
+/**
  * 是否百分比值
  * @param {any} object 值
  */
@@ -85,4 +93,16 @@ export function decimal2Hex(num, width) {
  */
 export function numberRange(value, min = 0, max = 1) {
   return Math.min(max, Math.max(min, value))
+}
+
+/**
+ * 百分比转数值0-1
+ * @param {String|number} value 100%/0.1
+ */
+export function percentage2Value(value) {
+  if (isString(value) && value.endsWith('%')) {
+    return parseFloat(value) / 100
+  }
+
+  return parseFloat(value)
 }
