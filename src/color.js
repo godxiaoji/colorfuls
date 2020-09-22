@@ -738,7 +738,7 @@ export function Color(value) {
       value instanceof HSLA ||
       value instanceof HEXA
     ) {
-      return value
+      return clone(value)
     } else if (isNumber(value.r) && isNumber(value.g) && isNumber(value.b)) {
       return rgba2RGBA(value)
     } else if (
