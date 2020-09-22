@@ -76,7 +76,7 @@ function _rgb2hsl(r, g, b) {
   }
 
   return {
-    h,
+    h: h * 360,
     s,
     l
   }
@@ -97,17 +97,20 @@ function _hsl2rgb(h, s, l) {
   if (s == 0) {
     r = g = b = l
   } else {
-    const p2 = l < 0.5 ? l * (1 + s) : l + s - l * s
-    const p1 = 2 * l - p2
-    r = hue2rgb(p1, p2, h + 1 / 3)
+    h = new Big(h).div(360)
+
+    const p2 = l.lt(0.5) ? l.times(s.plus(1)) : l.plus(s).minus(l.times(s))
+    const p1 = l.times(2).minus(p2)
+
+    r = hue2rgb(p1, p2, h.plus(1 / 3))
     g = hue2rgb(p1, p2, h)
-    b = hue2rgb(p1, p2, h - 1 / 3)
+    b = hue2rgb(p1, p2, h.minus(1 / 3))
   }
 
   return {
-    r: Math.round(r * 255),
-    g: Math.round(g * 255),
-    b: Math.round(b * 255)
+    r: Math.round(r.times(255)),
+    g: Math.round(g.times(255)),
+    b: Math.round(b.times(255))
   }
 }
 
@@ -125,12 +128,20 @@ function parseAlpha(value) {
   return new Big(opacity)
 }
 
-function fadeOut(alpha, ratio) {
-  return bigNumberRange(alpha.times(new Big(1).minus(percentage2Length(ratio))))
+function channelLength(value) {
+  return bigNumberRange(new Big(percentage2Length(value)))
 }
 
-function fadeIn(alpha, ratio) {
-  return bigNumberRange(alpha.times(new Big(1).plus(percentage2Length(ratio))))
+function channelDown(channel, ratio) {
+  return bigNumberRange(
+    channel.times(new Big(1).minus(percentage2Length(ratio)))
+  )
+}
+
+function channelUp(channel, ratio) {
+  return bigNumberRange(
+    channel.times(new Big(1).plus(percentage2Length(ratio)))
+  )
 }
 
 function isBig(object) {
@@ -229,7 +240,7 @@ class RGBA {
    * @param {Number|String} ratio 比值 0.5/50%
    */
   fadeOut(ratio) {
-    this._a = fadeOut(this._a, ratio)
+    this._a = channelDown(this._a, ratio)
     return this
   }
 
@@ -238,7 +249,7 @@ class RGBA {
    * @param {Number|String} ratio 比值 0.5/50%
    */
   fadeIn(ratio) {
-    this._a = fadeIn(this._a, ratio)
+    this._a = channelUp(this._a, ratio)
     return this
   }
 
@@ -353,14 +364,14 @@ class HSLA {
   /**
    * 构造器
    * @param {Number} h 色相 0-360
-   * @param {Number} s 饱和度 0-100%
-   * @param {Number} l 亮度 0-100%
+   * @param {Number|String} s 饱和度 0-100%
+   * @param {Number|String} l 亮度 0-100%
    * @param {Number} a 透明通道
    */
   constructor(h, s, l, a) {
-    this._h = h
-    this._s = s
-    this._l = l
+    this.hue(h)
+    this.saturation(s)
+    this.lightness(l)
     this.alpha(a)
   }
 
@@ -374,9 +385,9 @@ class HSLA {
    */
   hue(deg) {
     if (isUndefined(deg)) {
-      return Math.round(this._h * 360)
-    } else if (isNumber(deg)) {
-      this._h = parseInt(numberRange(deg, 0, 360)) / 360
+      return Math.round(this._h)
+    } else if (isNumeric(deg)) {
+      this._h = numberRange(parseFloat(deg), 0, 360)
     }
     return this
   }
@@ -387,9 +398,9 @@ class HSLA {
    */
   saturation(value) {
     if (isUndefined(value)) {
-      return Math.round(this._s * 100) + '%'
+      return this._s.times(100).toFixed(0) + '%'
     } else if (isNumeric(value)) {
-      this._s = percentage2Length(value)
+      this._s = channelLength(value)
     }
     return this
   }
@@ -400,9 +411,9 @@ class HSLA {
    */
   lightness(value) {
     if (isUndefined(value)) {
-      return Math.round(this._l * 100) + '%'
+      return this._l.times(100).toFixed(0) + '%'
     } else if (isNumeric(value)) {
-      this._l = percentage2Length(value)
+      this._l = channelLength(value)
     }
     return this
   }
@@ -425,7 +436,7 @@ class HSLA {
    * @param {Number|String} ratio 比值 0.5/50%
    */
   fadeOut(ratio) {
-    this._a = fadeOut(this._a, ratio)
+    this._a = channelDown(this._a, ratio)
     return this
   }
 
@@ -434,7 +445,7 @@ class HSLA {
    * @param {Number|String} ratio 比值 0.5/50%
    */
   fadeIn(ratio) {
-    this._a = fadeIn(this._a, ratio)
+    this._a = channelUp(this._a, ratio)
     return this
   }
 
@@ -460,7 +471,7 @@ class HSLA {
    */
   rotate(deg) {
     if (isNumber(deg)) {
-      this._h = ((this._h * 360 + deg + 360) % 360) / 360
+      this._h = (this._h + deg + 360) % 360
     }
     return this
   }
@@ -471,7 +482,7 @@ class HSLA {
    */
   saturate(ratio) {
     if (isNumber(ratio)) {
-      this._s = numberRange(this._s * (1 + percentage2Length(ratio)))
+      this._s = channelUp(this._s, ratio)
     }
     return this
   }
@@ -482,7 +493,7 @@ class HSLA {
    */
   desaturate(ratio) {
     if (isNumber(ratio)) {
-      this._s = numberRange(this._s * (1 - percentage2Length(ratio)))
+      this._s = channelDown(this._s, ratio)
     }
     return this
   }
@@ -493,7 +504,7 @@ class HSLA {
    */
   lighten(ratio) {
     if (isNumber(ratio)) {
-      this._l = numberRange(this._l * (1 + percentage2Length(ratio)))
+      this._l = channelUp(this._l, ratio)
     }
     return this
   }
@@ -504,7 +515,7 @@ class HSLA {
    */
   darken(ratio) {
     if (isNumber(ratio)) {
-      this._l = numberRange(this._l * (1 - percentage2Length(ratio)))
+      this._l = channelDown(this._l, ratio)
     }
     return this
   }
@@ -569,9 +580,7 @@ class HSLA {
   }
 
   toHsla() {
-    return `hsla(${this.hue()}, ${this.saturation()}, ${this.lightness()}, ${
-      this._a
-    })`
+    return `hsla(${this.hue()}, ${this.saturation()}, ${this.lightness()}, ${this.alpha()})`
   }
 
   toString() {
@@ -741,11 +750,12 @@ export function hexa2HEXA(hexa) {
 }
 
 function hue2rgb(p1, p2, hue) {
-  if (hue < 0) hue += 1
-  if (hue > 1) hue -= 1
-  if (6 * hue < 1) return p1 + (p2 - p1) * 6 * hue
-  if (2 * hue < 1) return p2
-  if (3 * hue < 2) return p1 + (p2 - p1) * (2 / 3 - hue) * 6
+  if (hue.lt(0)) hue = hue.plus(1)
+  if (hue.gt(1)) hue = hue.minus(1)
+  if (hue.times(6).lt(1)) return p1.plus(p2.minus(p1).times(6).times(hue))
+  if (hue.times(2).lt(1)) return p2
+  if (hue.times(3).lt(2))
+    return p1.plus(p2.minus(p1).times(new Big(2 / 3).minus(hue).times(6)))
   return p1
 }
 
@@ -769,11 +779,7 @@ export function hsla2HSLA(hsla) {
     throw new Error('It is not a valid hsl/hsla string')
   }
 
-  const h = parseInt(matches[1]) / 360
-  const s = numberRange(percentage2Length(matches[2]))
-  const l = numberRange(percentage2Length(matches[3]))
-
-  return new HSLA(h, s, l, matches[4])
+  return new HSLA(...matches.slice(1, 5))
 }
 
 /**
