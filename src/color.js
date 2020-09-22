@@ -681,9 +681,9 @@ class HEXA {
 
 function value2Binary(value) {
   if (isString(value) && value.endsWith('%')) {
-    return Math.round((255 * parseInt(value)) / 100)
+    value = (255 * value) / 100
   }
-  return Math.round(value)
+  return numberRange(Math.round(value), 0, 255)
 }
 
 /**
@@ -695,9 +695,9 @@ export function rgba2RGBA(rgba) {
 
   if (
     isObject(rgba) &&
-    isNumber(rgba.r) &&
-    isNumber(rgba.g) &&
-    isNumber(rgba.b)
+    isNumeric(rgba.r) &&
+    isNumeric(rgba.g) &&
+    isNumeric(rgba.b)
   ) {
     matches = [
       null,
@@ -814,7 +814,7 @@ export function Color(value) {
       value instanceof HEXA
     ) {
       return clone(value)
-    } else if (isNumber(value.r) && isNumber(value.g) && isNumber(value.b)) {
+    } else if (isNumeric(value.r) && isNumeric(value.g) && isNumeric(value.b)) {
       return rgba2RGBA(value)
     } else if (
       isNumber(value.h) &&
