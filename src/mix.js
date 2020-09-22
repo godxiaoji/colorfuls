@@ -1,9 +1,14 @@
 import { rgba2RGBA, Color } from './color'
 import { isUndefined, numberRange, percentage2Value } from './util'
 
+/**
+ * 混合颜色
+ * @param {Color} color1 颜色值或者实例1
+ * @param {Color} color2 颜色值或者实例2
+ * @param {String|Number} weight 权重 0.5/50%
+ * @see https://sass-lang.com/documentation/values/colors
+ */
 export default function mix(color1, color2, weight) {
-  // ported from sass implementation in C
-  // https://github.com/sass/libsass/blob/0e6b4a2850092356aa3ece07c6b249f0221caced/functions.cpp#L209
   const c1 = Color(color1).rgba()
   const c2 = Color(color2).rgba()
 
