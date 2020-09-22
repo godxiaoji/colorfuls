@@ -92,9 +92,10 @@ function _rgb2hex(r, g, b) {
 
 function _hsl2rgb(h, s, l) {
   let r, g, b
-  if (s == 0) {
+  if (s === 0) {
     r = g = b = l
   } else {
+    h = h / 360
     const p2 = l < 0.5 ? l * (1 + s) : l + s - l * s
     const p1 = 2 * l - p2
     r = hue2rgb(p1, p2, h + 1 / 3)

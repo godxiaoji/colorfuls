@@ -1,6 +1,5 @@
 import { clone, Color, rgba2RGBA } from './color'
 import { isArray, numberRange, percentage2Length } from './util'
-import Big from 'big.js/big.mjs'
 
 function color2Array(color, gamma) {
   return color.toArray().map((channel, k) => {
@@ -21,6 +20,10 @@ function getStepColor(p, colors, gamma) {
       const prevItem = colors[i - 1]
       start = color2Array(prevItem.color, gamma)
       end = color2Array(item.color, gamma)
+      console.log(
+        p - prevItem.percentage,
+        item.percentage - prevItem.percentage
+      )
       p = (p - prevItem.percentage) / (item.percentage - prevItem.percentage)
       break
     }
@@ -37,7 +40,16 @@ function getStepColor(p, colors, gamma) {
       arr[i] = Math.round(channel * 255)
     }
   }
-
+  console.log(
+    p,
+    arr,
+    rgba2RGBA({
+      r: arr[0],
+      g: arr[1],
+      b: arr[2],
+      a: arr[3]
+    }).toHexa()
+  )
   return rgba2RGBA({
     r: arr[0],
     g: arr[1],
@@ -56,17 +68,19 @@ function parseColors(args) {
 
     if (isArray(args[i])) {
       item.color = Color(args[i][0]).rgba()
-      item.percentage = new Big(
-        numberRange(percentage2Length(args[i][1]), minPercentage, 1)
+      item.percentage = numberRange(
+        percentage2Length(args[i][1]),
+        minPercentage,
+        1
       )
     } else {
       item.color = Color(args[i]).rgba()
     }
 
     if (i === 0) {
-      item.percentage = new Big(0)
+      item.percentage = 0
     } else if (i === len - 1) {
-      item.percentage = new Big(1)
+      item.percentage = 1
     }
 
     if (item.percentage === null) {
@@ -74,14 +88,14 @@ function parseColors(args) {
     } else if (i > 0) {
       minPercentage = item.percentage
       if (unknownPercentageIndexs.length > 0) {
-        const step = item.percentage
-          .minus(colors[unknownPercentageIndexs[0] - 1].percentage)
-          .div(unknownPercentageIndexs.length + 1)
+        const step =
+          (item.percentage -
+            colors[unknownPercentageIndexs[0] - 1].percentage) /
+          (unknownPercentageIndexs.length + 1)
 
         unknownPercentageIndexs.forEach((colorIndex, k) => {
-          colors[colorIndex].percentage = item.percentage.minus(
-            step.times(unknownPercentageIndexs.length - k)
-          )
+          colors[colorIndex].percentage =
+            item.percentage - step * (unknownPercentageIndexs.length - k)
         })
         unknownPercentageIndexs = []
       }

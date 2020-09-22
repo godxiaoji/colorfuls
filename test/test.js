@@ -141,7 +141,7 @@ describe('Color', () => {
     it(`mix(#f00, #00f) -> #7F007F`, () => {
       assert.strictEqual(mix('#f00', '#00f').toHex(), '#7F007F')
     })
-    it(`mix(#f00, #00f, 25%) -> #7F007F`, () => {
+    it(`mix(#f00, #00f, 25%) -> #3F00BF`, () => {
       assert.strictEqual(mix('#f00', '#00f', '25%').toHex(), '#3F00BF')
     })
     it(`mix(rgba(255, 0, 0, 0.5), #00f) -> rgba(63, 0, 191, 0.75)`, () => {
@@ -173,6 +173,15 @@ describe('Color', () => {
       assert.strictEqual(
         linearGradient('#000', '#fff', '#000').steps(5).toHexs().join(', '),
         '#000000, #808080, #FFFFFF, #808080, #000000'
+      )
+    })
+    it(`linearGradient(#000, #111, #222, #333, [#444, 0.4], #fff) -> #000000, #111111, #222222, #333333, #444444, #636363, #828282, #A1A1A1, #C1C1C1, #E0E0E0, #FFFFFF`, () => {
+      assert.strictEqual(
+        linearGradient('#000', '#111', '#222', '#333', ['#444', '40%'], '#fff')
+          .steps(11)
+          .toHexs()
+          .join(', '),
+        '#000000, #111111, #222222, #333333, #444444, #636363, #828282, #A1A1A1, #C1C1C1, #E0E0E0, #FFFFFF'
       )
     })
   })
