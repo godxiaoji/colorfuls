@@ -1,5 +1,5 @@
-import { clone, Color } from './color'
-import { isArray, numberRange, percentage2Value } from './util'
+import { clone, Color, rgba2RGBA } from './color'
+import { isArray, numberRange, percentage2Length } from './util'
 import Big from 'big.js/big.mjs'
 
 function color2Array(color, gamma) {
@@ -28,19 +28,72 @@ function getStepColor(p, colors, gamma) {
 
   const arr = []
 
-  for (let i = 0; i < 3; i++) {
-    arr[i] = Math.round(
-      Math.pow(start[i] * (1 - p) + end[i] * p, 1 / gamma) * 255
-    )
-  }
-  arr[3] = Math.pow(start[3] * (1 - p) + end[3] * p, 1 / gamma)
+  for (let i = 0; i < 4; i++) {
+    const channel = Math.pow(start[i] * (1 - p) + end[i] * p, 1 / gamma)
 
-  return Color({
+    if (i === 3) {
+      arr[i] = channel
+    } else {
+      arr[i] = Math.round(channel * 255)
+    }
+  }
+
+  return rgba2RGBA({
     r: arr[0],
     g: arr[1],
     b: arr[2],
     a: arr[3]
   })
+}
+
+function parseColors(args) {
+  const colors = []
+  let unknownPercentageIndexs = []
+  let minPercentage = 0
+
+  for (let i = 0, len = args.length; i < len; i++) {
+    const item = { percentage: null }
+
+    if (isArray(args[i])) {
+      item.color = Color(args[i][0]).rgba()
+      item.percentage = new Big(
+        numberRange(percentage2Length(args[i][1]), minPercentage, 1)
+      )
+    } else {
+      item.color = Color(args[i]).rgba()
+    }
+
+    if (i === 0) {
+      item.percentage = new Big(0)
+    } else if (i === len - 1) {
+      item.percentage = new Big(1)
+    }
+
+    if (item.percentage === null) {
+      unknownPercentageIndexs.push(i)
+    } else if (i > 0) {
+      minPercentage = item.percentage
+      if (unknownPercentageIndexs.length > 0) {
+        const step = item.percentage
+          .minus(colors[unknownPercentageIndexs[0] - 1].percentage)
+          .div(unknownPercentageIndexs.length + 1)
+
+        unknownPercentageIndexs.forEach((colorIndex, k) => {
+          colors[colorIndex].percentage = item.percentage.minus(
+            step.times(unknownPercentageIndexs.length - k)
+          )
+        })
+        unknownPercentageIndexs = []
+      }
+    }
+    colors.push(item)
+  }
+
+  //   colors.forEach(v => {
+  //     console.log(v.percentage.toFixed(5))
+  //   })
+
+  return colors
 }
 
 class GradientSteps extends Array {
@@ -86,23 +139,9 @@ class GradientSteps extends Array {
 }
 
 class Gradient {
-  constructor(startColor, endColor, gamma = 1) {
-    if (isArray(startColor)) {
-      this.colors = startColor
-      this.gamma = endColor
-    } else {
-      this.colors = [
-        {
-          percentage: 0,
-          color: startColor
-        },
-        {
-          percentage: 1,
-          color: endColor
-        }
-      ]
-      this.gamma = gamma
-    }
+  constructor(colors, gamma = 1) {
+    this.colors = parseColors(colors)
+    this.gamma = gamma
   }
 
   steps(len) {
@@ -118,14 +157,14 @@ class Gradient {
   }
 
   step(value) {
-    const p = numberRange(percentage2Value(value))
+    const p = numberRange(percentage2Length(value))
 
     return getStepColor(p, this.colors, this.gamma)
   }
 }
 
 export default function gradient(color1, color2, gamma = 1) {
-  return new Gradient(Color(color1).rgba(), Color(color2).rgba(), gamma)
+  return new Gradient([color1, color2], gamma)
 }
 
 /**
@@ -133,50 +172,5 @@ export default function gradient(color1, color2, gamma = 1) {
  * @param  {...string|string[]} args
  */
 export function linearGradient(...args) {
-  const colors = []
-  let unknownPercentageIndexs = []
-  let minPercentage = 0
-
-  for (let i = 0, len = args.length; i < len; i++) {
-    const item = { percentage: null }
-
-    if (isArray(args[i])) {
-      item.color = Color(args[i][0]).rgba()
-      item.percentage = numberRange(
-        percentage2Value(args[i][1]),
-        minPercentage,
-        1
-      )
-    } else {
-      item.color = Color(args[i]).rgba()
-    }
-
-    if (i === 0) {
-      item.percentage = 0
-    } else if (i === len - 1) {
-      item.percentage = 1
-    }
-
-    if (item.percentage === null) {
-      unknownPercentageIndexs.push(i)
-    } else if (i > 0) {
-      minPercentage = item.percentage
-      if (unknownPercentageIndexs.length > 0) {
-        const step =
-          (item.percentage -
-            colors[unknownPercentageIndexs[0] - 1].percentage) /
-          (unknownPercentageIndexs.length + 1)
-
-        unknownPercentageIndexs.forEach((colorIndex, k) => {
-          colors[colorIndex].percentage =
-            item.percentage - (unknownPercentageIndexs.length - k) * step
-        })
-        unknownPercentageIndexs = []
-      }
-    }
-
-    colors.push(item)
-  }
-
-  return new Gradient(colors, 1)
+  return new Gradient(args, 1)
 }

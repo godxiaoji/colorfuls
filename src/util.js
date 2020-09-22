@@ -107,7 +107,7 @@ export function numberRange(value, min = 0, max = 1) {
  * 百分比转数值0-1
  * @param {String|number} value 100%/0.1
  */
-export function percentage2Value(value) {
+export function percentage2Length(value) {
   if (isString(value) && value.endsWith('%')) {
     return parseFloat(value) / 100
   }

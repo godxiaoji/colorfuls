@@ -6,7 +6,7 @@ import {
   decimal2Hex,
   numberRange,
   isLimitPercentage,
-  percentage2Value,
+  percentage2Length,
   isUndefined
 } from './util'
 
@@ -74,7 +74,7 @@ function _rgb2hsl(r, g, b) {
   }
 
   return {
-    h,
+    h: h * 360,
     s,
     l
   }
@@ -109,13 +109,25 @@ function _hsl2rgb(h, s, l) {
   }
 }
 
-function _parseAlpha(value) {
+function parseAlpha(value) {
   let opacity = 1
   if (isNumeric(value)) {
-    return numberRange(percentage2Value(value))
+    opacity = numberRange(percentage2Length(value))
   }
 
   return opacity
+}
+
+function channelLength(value) {
+  return numberRange(percentage2Length(value))
+}
+
+function channelDown(channel, ratio) {
+  return numberRange(channel * (1 - percentage2Length(ratio)))
+}
+
+function channelUp(channel, ratio) {
+  return numberRange(channel * (1 + percentage2Length(ratio)))
 }
 
 /**
@@ -200,7 +212,7 @@ class RGBA {
     if (isUndefined(value)) {
       return this._a
     } else {
-      this._a = _parseAlpha(value)
+      this._a = parseAlpha(value)
     }
     return this
   }
@@ -209,10 +221,8 @@ class RGBA {
    * 增加透明度
    * @param {Number|String} ratio 比值 0.5/50%
    */
-  fade(ratio) {
-    if (isNumber(ratio)) {
-      this._a = numberRange(this._a * (1 - percentage2Value(ratio)))
-    }
+  fadeOut(ratio) {
+    this._a = channelDown(this._a, ratio)
     return this
   }
 
@@ -220,11 +230,25 @@ class RGBA {
    * 降低透明度
    * @param {Number|String} ratio 比值 0.5/50%
    */
-  opaque(ratio) {
-    if (isNumber(ratio)) {
-      this._a = numberRange(this._a * (1 + percentage2Value(ratio)))
-    }
+  fadeIn(ratio) {
+    this._a = channelUp(this._a, ratio)
     return this
+  }
+
+  /**
+   * 增加透明度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  fade(ratio) {
+    return this.fadeOut(ratio)
+  }
+
+  /**
+   * 降低透明度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  opaque(ratio) {
+    return this.fadeIn(ratio)
   }
 
   /**
@@ -249,7 +273,7 @@ class RGBA {
    * 灰阶
    */
   grayscale() {
-    const gray = Math.ceil(rgb2Gray(this._r, this._g, this._b))
+    const gray = Math.round(rgb2Gray(this._r, this._g, this._b))
 
     this._r = gray
     this._g = gray
@@ -303,7 +327,7 @@ class RGBA {
   }
 
   toRgba() {
-    return `rgba(${this._r}, ${this._g}, ${this._b}, ${this._a})`
+    return `rgba(${this._r}, ${this._g}, ${this._b}, ${this.alpha()})`
   }
 
   toString() {
@@ -311,7 +335,7 @@ class RGBA {
   }
 
   toArray() {
-    return [this._r, this._g, this._b, this._a]
+    return [this._r, this._g, this._b, this.alpha()]
   }
 }
 
@@ -322,14 +346,14 @@ class HSLA {
   /**
    * 构造器
    * @param {Number} h 色相 0-360
-   * @param {Number} s 饱和度 0-100%
-   * @param {Number} l 亮度 0-100%
+   * @param {Number|String} s 饱和度 0-100%
+   * @param {Number|String} l 亮度 0-100%
    * @param {Number} a 透明通道
    */
   constructor(h, s, l, a) {
-    this._h = h
-    this._s = s
-    this._l = l
+    this.hue(h)
+    this.saturation(s)
+    this.lightness(l)
     this.alpha(a)
   }
 
@@ -343,9 +367,9 @@ class HSLA {
    */
   hue(deg) {
     if (isUndefined(deg)) {
-      return Math.round(this._h * 360)
-    } else if (isNumber(deg)) {
-      this._h = parseInt(numberRange(deg, 0, 360)) / 360
+      return Math.round(this._h)
+    } else if (isNumeric(deg)) {
+      this._h = numberRange(parseFloat(deg), 0, 360)
     }
     return this
   }
@@ -358,7 +382,7 @@ class HSLA {
     if (isUndefined(value)) {
       return Math.round(this._s * 100) + '%'
     } else if (isNumeric(value)) {
-      this._s = percentage2Value(value)
+      this._s = channelLength(value)
     }
     return this
   }
@@ -371,7 +395,7 @@ class HSLA {
     if (isUndefined(value)) {
       return Math.round(this._l * 100) + '%'
     } else if (isNumeric(value)) {
-      this._l = percentage2Value(value)
+      this._l = channelLength(value)
     }
     return this
   }
@@ -384,9 +408,43 @@ class HSLA {
     if (isUndefined(value)) {
       return this._a
     } else {
-      this._a = _parseAlpha(value)
+      this._a = parseAlpha(value)
     }
     return this
+  }
+
+  /**
+   * 增加透明度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  fadeOut(ratio) {
+    this._a = channelDown(this._a, ratio)
+    return this
+  }
+
+  /**
+   * 降低透明度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  fadeIn(ratio) {
+    this._a = channelUp(this._a, ratio)
+    return this
+  }
+
+  /**
+   * 增加透明度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  fade(ratio) {
+    return this.fadeOut(ratio)
+  }
+
+  /**
+   * 降低透明度
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  opaque(ratio) {
+    return this.fadeIn(ratio)
   }
 
   /**
@@ -395,7 +453,7 @@ class HSLA {
    */
   rotate(deg) {
     if (isNumber(deg)) {
-      this._h = ((this._h * 360 + deg + 360) % 360) / 360
+      this._h = (this._h + deg + 360) % 360
     }
     return this
   }
@@ -406,7 +464,7 @@ class HSLA {
    */
   saturate(ratio) {
     if (isNumber(ratio)) {
-      this._s = numberRange(this._s * (1 + percentage2Value(ratio)))
+      this._s = channelUp(this._s, ratio)
     }
     return this
   }
@@ -417,7 +475,7 @@ class HSLA {
    */
   desaturate(ratio) {
     if (isNumber(ratio)) {
-      this._s = numberRange(this._s * (1 - percentage2Value(ratio)))
+      this._s = channelDown(this._s, ratio)
     }
     return this
   }
@@ -428,7 +486,7 @@ class HSLA {
    */
   lighten(ratio) {
     if (isNumber(ratio)) {
-      this._l = numberRange(this._l * (1 + percentage2Value(ratio)))
+      this._l = channelUp(this._l, ratio)
     }
     return this
   }
@@ -439,7 +497,7 @@ class HSLA {
    */
   darken(ratio) {
     if (isNumber(ratio)) {
-      this._l = numberRange(this._l * (1 - percentage2Value(ratio)))
+      this._l = channelDown(this._l, ratio)
     }
     return this
   }
@@ -504,9 +562,7 @@ class HSLA {
   }
 
   toHsla() {
-    return `hsla(${this.hue()}, ${this.saturation()}, ${this.lightness()}, ${
-      this._a
-    })`
+    return `hsla(${this.hue()}, ${this.saturation()}, ${this.lightness()}, ${this.alpha()})`
   }
 
   toString() {
@@ -632,14 +688,12 @@ export function rgba2RGBA(rgba) {
     throw new Error('It is not a valid rgb/rgba string')
   }
 
-  const rgbaMap = new RGBA(
+  return new RGBA(
     value2Binary(matches[1]),
     value2Binary(matches[2]),
     value2Binary(matches[3]),
     matches[4]
   )
-
-  return rgbaMap
 }
 
 /**
@@ -704,11 +758,7 @@ export function hsla2HSLA(hsla) {
     throw new Error('It is not a valid hsl/hsla string')
   }
 
-  const h = parseInt(matches[1]) / 360
-  const s = numberRange(percentage2Value(matches[2]))
-  const l = numberRange(percentage2Value(matches[3]))
-
-  return new HSLA(h, s, l, matches[4])
+  return new HSLA(...matches.slice(1, 5))
 }
 
 /**
