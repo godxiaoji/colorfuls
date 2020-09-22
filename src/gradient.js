@@ -1,4 +1,4 @@
-import { clone, Color } from './color'
+import { clone, Color, rgba2RGBA } from './color'
 import { isArray, numberRange, percentage2Length } from './util'
 import Big from 'big.js/big.mjs'
 
@@ -37,14 +37,14 @@ function getStepColor(p, colors, gamma) {
     if (i === 3) {
       arr[i] = channel
     } else {
-      arr[i] = channel.times(255).round().toString()
+      arr[i] = channel.times(255)
     }
   }
 
-  return Color({
-    r: parseInt(arr[0]),
-    g: parseInt(arr[1]),
-    b: parseInt(arr[2]),
+  return rgba2RGBA({
+    r: parseFloat(arr[0]),
+    g: parseFloat(arr[1]),
+    b: parseFloat(arr[2]),
     a: arr[3]
   })
 }

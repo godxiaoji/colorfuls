@@ -138,16 +138,16 @@ describe('Color', () => {
 
   // mix
   describe('Mix', () => {
-    it(`mix(#f00, #00f) -> #7F007F`, () => {
-      assert.strictEqual(mix('#f00', '#00f').toHex(), '#7F007F')
+    it(`mix(#f00, #00f) -> #800080`, () => {
+      assert.strictEqual(mix('#f00', '#00f').toHex(), '#800080')
     })
     it(`mix(#f00, #00f, 25%) -> #3F00BF`, () => {
-      assert.strictEqual(mix('#f00', '#00f', '25%').toHex(), '#3F00BF')
+      assert.strictEqual(mix('#f00', '#00f', '25%').toHex(), '#4000BF')
     })
-    it(`mix(rgba(255, 0, 0, 0.5), #00f) -> rgba(63, 0, 191, 0.75)`, () => {
+    it(`mix(rgba(255, 0, 0, 0.5), #00f) -> rgba(64, 0, 191, 0.75)`, () => {
       assert.strictEqual(
         mix('rgba(255, 0, 0, 0.5)', '#00f').toRgba(),
-        'rgba(63, 0, 191, 0.75)'
+        'rgba(64, 0, 191, 0.75)'
       )
     })
   })
