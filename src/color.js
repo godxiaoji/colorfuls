@@ -133,12 +133,20 @@ function channelLength(value) {
 }
 
 function channelDown(channel, ratio) {
+  if (!isNumeric(ratio)) {
+    throwPercentageLikeError(ratio)
+  }
+
   return bigNumberRange(
     channel.times(new Big(1).minus(percentage2Length(ratio)))
   )
 }
 
 function channelUp(channel, ratio) {
+  if (!isNumeric(ratio)) {
+    throwPercentageLikeError(ratio)
+  }
+
   return bigNumberRange(
     channel.times(new Big(1).plus(percentage2Length(ratio)))
   )
@@ -161,6 +169,12 @@ function rgb2Gray(r, g, b) {
   return (r * 38 + g * 75 + b * 15) >> 7
 }
 
+function throwPercentageLikeError(value) {
+  throw new Error(
+    `parameter should be number/percentage instead of ${typeof value}`
+  )
+}
+
 /**
  * RGBA 构造
  */
@@ -173,11 +187,10 @@ class RGBA {
    * @param {Number|String} a 透明通道
    */
   constructor(r, g, b, a) {
-    this._r = r
-    this._g = g
-    this._b = b
-    this._a = 1
-    this.alpha(a)
+    this.red(r)
+    this.green(g)
+    this.blue(b)
+    this.alpha(isNumeric(a) || isBig(a) ? a : 1)
   }
 
   rgba() {
@@ -186,39 +199,45 @@ class RGBA {
 
   /**
    * 获取/设置红色通道
-   * @param {Number} value
+   * @param {Number|Sring?} value
    */
   red(value) {
     if (isUndefined(value)) {
       return this._r
-    } else if (isNumber(value)) {
-      this._r = parseInt(numberRange(value, 0, 255))
+    } else if (isNumeric(value)) {
+      this._r = value2Binary(value)
+    } else {
+      throwPercentageLikeError(value)
     }
     return this
   }
 
   /**
    * 获取/设置绿色通道
-   * @param {Number} value
+   * @param {Number|Sring?} value
    */
   green(value) {
     if (isUndefined(value)) {
       return this._g
-    } else if (isNumber(value)) {
-      this._g = parseInt(numberRange(value, 0, 255))
+    } else if (isNumeric(value)) {
+      this._g = value2Binary(value)
+    } else {
+      throwPercentageLikeError(value)
     }
     return this
   }
 
   /**
    * 获取/设置蓝色通道
-   * @param {Number} value
+   * @param {Number|Sring?} value
    */
   blue(value) {
     if (isUndefined(value)) {
       return this._b
-    } else if (isNumber(value)) {
-      this._b = parseInt(numberRange(value, 0, 255))
+    } else if (isNumeric(value)) {
+      this._b = value2Binary(value)
+    } else {
+      throwPercentageLikeError(value)
     }
     return this
   }
@@ -230,8 +249,10 @@ class RGBA {
   alpha(value) {
     if (isUndefined(value)) {
       return parseFloat(this._a)
-    } else {
+    } else if (isNumeric(value) || isBig(value)) {
       this._a = parseAlpha(value)
+    } else {
+      throwPercentageLikeError(value)
     }
     return this
   }
@@ -370,12 +391,10 @@ class HSLA {
    * @param {Number} a 透明通道
    */
   constructor(h, s, l, a) {
-    this._a = 1
-
     this.hue(h)
     this.saturation(s)
     this.lightness(l)
-    this.alpha(a)
+    this.alpha(isNumeric(a) || isBig(a) ? a : 1)
   }
 
   hsla() {
@@ -384,13 +403,17 @@ class HSLA {
 
   /**
    * 获取/设置色相
-   * @param {Number} deg 角度值
+   * @param {Number} degree 角度值
    */
-  hue(deg) {
-    if (isUndefined(deg)) {
+  hue(degree) {
+    if (isUndefined(degree)) {
       return Math.round(this._h)
-    } else if (isNumeric(deg)) {
-      this._h = numberRange(parseFloat(deg), 0, 360)
+    } else if (isNumeric(degree)) {
+      this._h = numberRange(parseFloat(degree), 0, 360)
+    } else {
+      throw new Error(
+        `parameter should be number instead of ${typeof degree}`
+      )
     }
     return this
   }
@@ -401,9 +424,11 @@ class HSLA {
    */
   saturation(value) {
     if (isUndefined(value)) {
-      return this._s.times(100).toFixed(0) + '%'
+      return this._s.times(100).round().toFixed(0) + '%'
     } else if (isNumeric(value)) {
       this._s = channelLength(value)
+    } else {
+      throwPercentageLikeError(value)
     }
     return this
   }
@@ -414,9 +439,11 @@ class HSLA {
    */
   lightness(value) {
     if (isUndefined(value)) {
-      return this._l.times(100).toFixed(0) + '%'
+      return this._l.times(100).round().toFixed(0) + '%'
     } else if (isNumeric(value)) {
       this._l = channelLength(value)
+    } else {
+      throwPercentageLikeError(value)
     }
     return this
   }
@@ -428,8 +455,10 @@ class HSLA {
   alpha(value) {
     if (isUndefined(value)) {
       return parseFloat(this._a)
-    } else {
+    } else if (isNumeric(value) || isBig(value)) {
       this._a = parseAlpha(value)
+    } else {
+      throwPercentageLikeError(value)
     }
     return this
   }
@@ -470,11 +499,15 @@ class HSLA {
 
   /**
    * 调整色相
-   * @param {Number} deg 加权角度值
+   * @param {Number} degree 加权角度值
    */
-  rotate(deg) {
-    if (isNumber(deg)) {
-      this._h = (this._h + deg + 360) % 360
+  rotate(degree) {
+    if (isNumber(degree)) {
+      this._h = (this._h + degree + 360) % 360
+    } else {
+      throw new Error(
+        `parameter should be number instead of ${typeof degree}`
+      )
     }
     return this
   }
@@ -484,9 +517,7 @@ class HSLA {
    * @param {Number|String} ratio 比值 0.5/50%
    */
   saturate(ratio) {
-    if (isNumber(ratio)) {
-      this._s = channelUp(this._s, ratio)
-    }
+    this._s = channelUp(this._s, ratio)
     return this
   }
 
@@ -495,9 +526,7 @@ class HSLA {
    * @param {Number|String} ratio 比值 0.5/50%
    */
   desaturate(ratio) {
-    if (isNumber(ratio)) {
-      this._s = channelDown(this._s, ratio)
-    }
+    this._s = channelDown(this._s, ratio)
     return this
   }
 
@@ -506,9 +535,7 @@ class HSLA {
    * @param {Number|String} ratio 比值 0.5/50%
    */
   lighten(ratio) {
-    if (isNumber(ratio)) {
-      this._l = channelUp(this._l, ratio)
-    }
+    this._l = channelUp(this._l, ratio)
     return this
   }
 
@@ -517,9 +544,7 @@ class HSLA {
    * @param {Number|String} ratio 比值 0.5/50%
    */
   darken(ratio) {
-    if (isNumber(ratio)) {
-      this._l = channelDown(this._l, ratio)
-    }
+    this._l = channelDown(this._l, ratio)
     return this
   }
 
@@ -688,7 +713,9 @@ class HEXA {
 
 function value2Binary(value) {
   if (isString(value) && value.endsWith('%')) {
-    value = (255 * value) / 100
+    value = (255 * parseFloat(value)) / 100
+  } else {
+    value = parseFloat(value)
   }
   return numberRange(Math.round(value), 0, 255)
 }
@@ -719,12 +746,7 @@ export function rgba2RGBA(rgba) {
     throw new Error('It is not a valid rgb/rgba string')
   }
 
-  return new RGBA(
-    value2Binary(matches[1]),
-    value2Binary(matches[2]),
-    value2Binary(matches[3]),
-    matches[4]
-  )
+  return new RGBA(...matches.slice(1, 5))
 }
 
 /**
@@ -838,7 +860,7 @@ export function Color(value) {
     return hsla2HSLA(value)
   }
 
-  throw new Error('Invaild color value.')
+  throw new Error('invaild color value')
 }
 
 export default Color

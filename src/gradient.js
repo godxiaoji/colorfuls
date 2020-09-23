@@ -1,5 +1,5 @@
 import { clone, Color, rgba2RGBA } from './color'
-import { isArray, numberRange, percentage2Length } from './util'
+import { isArray, isNumber, numberRange, percentage2Length } from './util'
 import Big from 'big.js/big.mjs'
 
 function color2Array(color, gamma) {
@@ -149,17 +149,19 @@ class Gradient {
   }
 
   steps(length) {
-    const output = new GradientSteps()
+    if (isNumber(length) && length >= 2) {
+      const output = new GradientSteps()
 
-    if (length >= 2) {
       for (let i = 0; i < length; i++) {
         output.push(
           getStepColor(new Big(i).div(length - 1), this.colors, this.gamma)
         )
       }
+
+      return output
     }
 
-    return output
+    throw new Error(`parameter "length" should be more then 1`)
   }
 
   step(value) {

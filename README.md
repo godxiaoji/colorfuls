@@ -7,7 +7,7 @@ A small Javascript library for color conversion and manipulation. Also provides 
 ### CDN
 
 ```
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/colorfuls@0.0.2/dist/colorfuls.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/colorfuls@0.0.4/dist/colorfuls.js"></script>
 <script>
     const color = Colorfuls('#000000')
 </script>
