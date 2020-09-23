@@ -4,8 +4,8 @@ module.exports = {
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'colorful.js',
-    library: 'Colorful',
+    filename: 'colorfuls.js',
+    library: 'Colorfuls',
     libraryTarget: 'umd',
     libraryExport: 'default',
     umdNamedDefine: true,

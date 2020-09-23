@@ -1,4 +1,4 @@
-# colorfuljs
+# colorfuls
 
 A small Javascript library for color conversion and manipulation. Also provides color mixin and gradient.
 
@@ -7,22 +7,22 @@ A small Javascript library for color conversion and manipulation. Also provides 
 ### CDN
 
 ```
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/colorfuljs@0.0.1/dist/colorful.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/colorfuls@0.0.1/dist/colorful.js"></script>
 <script>
-    const color = Colorful('#000000')
+    const color = Colorfuls('#000000')
 </script>
 ```
 
 ### NPM
 
 ```
-$ npm install colorfuljs
+$ npm install colorfuls
 ```
 
 ## Usage
 
 ```
-import {Color, gradient, mix, linearGradient} from 'colorfuljs'
+import {Color, gradient, mix, linearGradient} from 'colorfuls'
 ```
 
 ### Constructors

@@ -16,7 +16,7 @@ const {
   mix,
   gradient,
   linearGradient
-} = require('../dist/colorful')
+} = require('../dist/colorfuls')
 
 describe('Color', () => {
   describe('Conversion', () => {

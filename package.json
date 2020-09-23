@@ -1,8 +1,8 @@
 {
-  "name": "colorfuljs",
+  "name": "colorfuls",
   "version": "0.0.1",
   "description": "A small Javascript library for color conversion and manipulation. Also provides color mixin and gradient.",
-  "main": "dist/colorful.js",
+  "main": "dist/colorfuls.js",
   "scripts": {
     "test": "eslint ./src/*.js && mocha",
     "build": "webpack",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/godxiaoji/colorfuljs.git"
+    "url": "git+https://github.com/godxiaoji/colorfuls.git"
   },
   "keywords": [
     "color",
@@ -26,9 +26,9 @@
   "author": "Travis",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/godxiaoji/colorfuljs/issues"
+    "url": "https://github.com/godxiaoji/colorfuls/issues"
   },
-  "homepage": "https://github.com/godxiaoji/colorfuljs#readme",
+  "homepage": "https://github.com/godxiaoji/colorfuls#readme",
   "files": [
     "dist/",
     "src/"
