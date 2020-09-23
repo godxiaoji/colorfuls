@@ -176,6 +176,7 @@ class RGBA {
     this._r = r
     this._g = g
     this._b = b
+    this._a = 1
     this.alpha(a)
   }
 
@@ -369,6 +370,8 @@ class HSLA {
    * @param {Number} a 透明通道
    */
   constructor(h, s, l, a) {
+    this._a = 1
+
     this.hue(h)
     this.saturation(s)
     this.lightness(l)
@@ -585,6 +588,10 @@ class HSLA {
 
   toString() {
     return this.toHsla()
+  }
+
+  toArray() {
+    return [this.hue(), this.saturation(), this.lightness(), this.alpha()]
   }
 }
 

@@ -5,8 +5,9 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'colorful.js',
-    library: 'colorful',
+    library: 'Colorful',
     libraryTarget: 'umd',
+    libraryExport: 'default',
     umdNamedDefine: true,
     globalObject: 'this'
   },

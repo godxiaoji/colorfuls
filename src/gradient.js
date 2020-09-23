@@ -102,41 +102,39 @@ function parseColors(args) {
   return colors
 }
 
+function steps2ColorArray(gs, method) {
+  const arr = []
+
+  gs.forEach(color => {
+    arr.push(color[method]())
+  })
+
+  return arr
+}
+
 class GradientSteps extends Array {
   toRgbs() {
-    return this.map(color => {
-      return color.toRgb()
-    })
+    return steps2ColorArray(this, 'toRgb')
   }
 
   toHexs() {
-    return this.map(color => {
-      return color.toHex()
-    })
+    return steps2ColorArray(this, 'toHex')
   }
 
   toHsls() {
-    return this.map(color => {
-      return color.toHsl()
-    })
+    return steps2ColorArray(this, 'toHsl')
   }
 
   toRgbas() {
-    return this.map(color => {
-      return color.toRgba()
-    })
+    return steps2ColorArray(this, 'toRgba')
   }
 
   toHexas() {
-    return this.map(color => {
-      return color.toHexa()
-    })
+    return steps2ColorArray(this, 'toHexa')
   }
 
   toHslas() {
-    return this.map(color => {
-      return color.toHsla()
-    })
+    return steps2ColorArray(this, 'toHsla')
   }
 
   toString() {
@@ -150,13 +148,13 @@ class Gradient {
     this.gamma = gamma
   }
 
-  steps(len) {
+  steps(length) {
     const output = new GradientSteps()
 
-    if (len >= 2) {
-      for (let i = 0; i < len; i++) {
+    if (length >= 2) {
+      for (let i = 0; i < length; i++) {
         output.push(
-          getStepColor(new Big(i).div(len - 1), this.colors, this.gamma)
+          getStepColor(new Big(i).div(length - 1), this.colors, this.gamma)
         )
       }
     }
