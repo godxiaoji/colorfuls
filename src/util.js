@@ -1,3 +1,5 @@
+import Big from 'big.js/big.mjs'
+
 /**
  * 是否数值，这里会对排除无穷大/无穷小的情况
  * @param {any} object 值
@@ -101,6 +103,22 @@ export function decimal2Hex(num, width) {
  */
 export function numberRange(value, min = 0, max = 1) {
   return Math.min(max, Math.max(min, value))
+}
+
+/**
+ * 数值限定范围
+ * @param {Big} value
+ * @param {Number} min
+ * @param {Number} max
+ */
+export function bigNumberRange(value, min = 0, max = 1) {
+  if (value.gt(max)) {
+    return new Big(max)
+  } else if (value.lt(min)) {
+    return new Big(min)
+  }
+
+  return value
 }
 
 /**

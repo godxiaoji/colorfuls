@@ -1,6 +1,6 @@
 const assert = require('assert')
 const {
-  default: Color,
+  Color,
   hexa2Rgba,
   hexa2hsla,
   rgba2hsla,
@@ -19,7 +19,7 @@ const {
 } = require('../dist/colorful')
 
 describe('Color', () => {
-  describe('Transform', () => {
+  describe('Conversion', () => {
     // hex rgb rgba
     it('HEX "#5CB1F8" should be RGB "rgb(92, 177, 248)"', () => {
       assert.strictEqual(hex2Rgb('#5CB1F8'), 'rgb(92, 177, 248)')

@@ -7,8 +7,10 @@ import {
   numberRange,
   isLimitPercentage,
   percentage2Length,
-  isUndefined
+  isUndefined,
+  bigNumberRange
 } from './util'
+import Big from 'big.js/big.mjs'
 
 // PS：不会写比较骚的正则，这个虽然长，但是容易看懂
 const hexaReg = /^#([0-9a-f]{8}|[0-9a-f]{6}|[0-9a-f]{3});?$/i
@@ -95,28 +97,55 @@ function _hsl2rgb(h, s, l) {
   if (s === 0) {
     r = g = b = l
   } else {
-    h = h / 360
-    const p2 = l < 0.5 ? l * (1 + s) : l + s - l * s
-    const p1 = 2 * l - p2
-    r = hue2rgb(p1, p2, h + 1 / 3)
+    h = new Big(h).div(360)
+
+    const p2 = l.lt(0.5) ? l.times(s.plus(1)) : l.plus(s).minus(l.times(s))
+    const p1 = l.times(2).minus(p2)
+
+    r = hue2rgb(p1, p2, h.plus(1 / 3))
     g = hue2rgb(p1, p2, h)
-    b = hue2rgb(p1, p2, h - 1 / 3)
+    b = hue2rgb(p1, p2, h.minus(1 / 3))
   }
 
   return {
-    r: Math.round(r * 255),
-    g: Math.round(g * 255),
-    b: Math.round(b * 255)
+    r: Math.round(r.times(255)),
+    g: Math.round(g.times(255)),
+    b: Math.round(b.times(255))
   }
 }
 
 function parseAlpha(value) {
   let opacity = 1
+
+  if (isBig(value)) {
+    return value
+  }
+
   if (isNumeric(value)) {
     opacity = numberRange(percentage2Length(value))
   }
 
-  return opacity
+  return new Big(opacity)
+}
+
+function channelLength(value) {
+  return bigNumberRange(new Big(percentage2Length(value)))
+}
+
+function channelDown(channel, ratio) {
+  return bigNumberRange(
+    channel.times(new Big(1).minus(percentage2Length(ratio)))
+  )
+}
+
+function channelUp(channel, ratio) {
+  return bigNumberRange(
+    channel.times(new Big(1).plus(percentage2Length(ratio)))
+  )
+}
+
+function isBig(object) {
+  return object instanceof Big
 }
 
 function channelLength(value) {
@@ -159,6 +188,7 @@ class RGBA {
     this._r = r
     this._g = g
     this._b = b
+    this._a = 1
     this.alpha(a)
   }
 
@@ -211,7 +241,7 @@ class RGBA {
    */
   alpha(value) {
     if (isUndefined(value)) {
-      return this._a
+      return parseFloat(this._a)
     } else {
       this._a = parseAlpha(value)
     }
@@ -352,6 +382,8 @@ class HSLA {
    * @param {Number} a 透明通道
    */
   constructor(h, s, l, a) {
+    this._a = 1
+
     this.hue(h)
     this.saturation(s)
     this.lightness(l)
@@ -381,7 +413,7 @@ class HSLA {
    */
   saturation(value) {
     if (isUndefined(value)) {
-      return Math.round(this._s * 100) + '%'
+      return this._s.times(100).toFixed(0) + '%'
     } else if (isNumeric(value)) {
       this._s = channelLength(value)
     }
@@ -394,7 +426,7 @@ class HSLA {
    */
   lightness(value) {
     if (isUndefined(value)) {
-      return Math.round(this._l * 100) + '%'
+      return this._l.times(100).toFixed(0) + '%'
     } else if (isNumeric(value)) {
       this._l = channelLength(value)
     }
@@ -407,7 +439,7 @@ class HSLA {
    */
   alpha(value) {
     if (isUndefined(value)) {
-      return this._a
+      return parseFloat(this._a)
     } else {
       this._a = parseAlpha(value)
     }
@@ -569,6 +601,10 @@ class HSLA {
   toString() {
     return this.toHsla()
   }
+
+  toArray() {
+    return [this.hue(), this.saturation(), this.lightness(), this.alpha()]
+  }
 }
 
 /**
@@ -682,7 +718,13 @@ export function rgba2RGBA(rgba) {
     isNumeric(rgba.g) &&
     isNumeric(rgba.b)
   ) {
-    matches = [null, rgba.r, rgba.g, rgba.b, isNumeric(rgba.a) ? rgba.a : 1]
+    matches = [
+      null,
+      rgba.r,
+      rgba.g,
+      rgba.b,
+      isBig(rgba.a) || isNumeric(rgba.a) ? rgba.a : 1
+    ]
   } else if (isRgba(rgba)) {
     matches = rgbaReg.exec(rgba.trim())
   } else {
@@ -731,11 +773,12 @@ export function hexa2HEXA(hexa) {
 }
 
 function hue2rgb(p1, p2, hue) {
-  if (hue < 0) hue += 1
-  if (hue > 1) hue -= 1
-  if (6 * hue < 1) return p1 + (p2 - p1) * 6 * hue
-  if (2 * hue < 1) return p2
-  if (3 * hue < 2) return p1 + (p2 - p1) * (2 / 3 - hue) * 6
+  if (hue.lt(0)) hue = hue.plus(1)
+  if (hue.gt(1)) hue = hue.minus(1)
+  if (hue.times(6).lt(1)) return p1.plus(p2.minus(p1).times(6).times(hue))
+  if (hue.times(2).lt(1)) return p2
+  if (hue.times(3).lt(2))
+    return p1.plus(p2.minus(p1).times(new Big(2 / 3).minus(hue).times(6)))
   return p1
 }
 
