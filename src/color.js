@@ -94,7 +94,7 @@ function _rgb2hex(r, g, b) {
 
 function _hsl2rgb(h, s, l) {
   let r, g, b
-  if (s === 0) {
+  if (s.eq(0)) {
     r = g = b = l
   } else {
     h = new Big(h).div(360)
@@ -146,18 +146,6 @@ function channelUp(channel, ratio) {
 
 function isBig(object) {
   return object instanceof Big
-}
-
-function channelLength(value) {
-  return numberRange(percentage2Length(value))
-}
-
-function channelDown(channel, ratio) {
-  return numberRange(channel * (1 - percentage2Length(ratio)))
-}
-
-function channelUp(channel, ratio) {
-  return numberRange(channel * (1 + percentage2Length(ratio)))
 }
 
 /**

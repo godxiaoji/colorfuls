@@ -1,9 +1,6 @@
 import { rgba2RGBA, Color } from './color'
 import { isUndefined, numberRange, percentage2Length } from './util'
-<<<<<<< HEAD
-=======
 import Big from 'big.js/big.mjs'
->>>>>>> big
 
 /**
  * 混合颜色
@@ -16,13 +13,6 @@ export default function mix(color1, color2, weight) {
   const c1 = Color(color1).rgba()
   const c2 = Color(color2).rgba()
 
-<<<<<<< HEAD
-  const p = isUndefined(weight) ? 0.5 : numberRange(percentage2Length(weight))
-  const w = 2 * p - 1
-  const a = c1.alpha() - c2.alpha()
-  const w1 = ((w * a === -1 ? w : (w + a) / (1 + w * a)) + 1) / 2.0
-  const w2 = 1 - w1
-=======
   const p = new Big(
     isUndefined(weight) ? 0.5 : numberRange(percentage2Length(weight))
   )
@@ -34,7 +24,6 @@ export default function mix(color1, color2, weight) {
     : w.plus(a).div(w.times(a).plus(1)).plus(1)
   ).div(2.0)
   const w2 = new Big(1).minus(w1)
->>>>>>> big
 
   return rgba2RGBA({
     r: parseFloat(w1.times(c1.red()).plus(w2.times(c2.red()))),
