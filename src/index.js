@@ -6,19 +6,19 @@ const Colorful = function Colorful(...args) {
   return Color.apply(null, args)
 }
 
-Colorful.rgba2hexa = function rgba2hexa(rgba) {
+Colorful.rgba2Hexa = function rgba2Hexa(rgba) {
   return rgba2RGBA(rgba).toHexa()
 }
 
-Colorful.rgba2hsla = function rgba2hsla(rgba) {
+Colorful.rgba2Hsla = function rgba2Hsla(rgba) {
   return rgba2RGBA(rgba).toHsla()
 }
 
-Colorful.rgb2hex = function rgb2hex(rgb) {
+Colorful.rgb2Hex = function rgb2Hex(rgb) {
   return rgba2RGBA(rgb).toHex()
 }
 
-Colorful.rgb2hsl = function rgb2hsl(rgb) {
+Colorful.rgb2Hsl = function rgb2Hsl(rgb) {
   return rgba2RGBA(rgb).toHsl()
 }
 
@@ -26,7 +26,7 @@ Colorful.hexa2Rgba = function hexa2Rgba(hexa) {
   return hexa2HEXA(hexa).toRgba()
 }
 
-Colorful.hexa2hsla = function hexa2hsla(hexa) {
+Colorful.hexa2Hsla = function hexa2Hsla(hexa) {
   return hexa2HEXA(hexa).toHsla()
 }
 
@@ -34,7 +34,7 @@ Colorful.hex2Rgb = function hex2Rgb(hex) {
   return hexa2HEXA(hex).toRgb()
 }
 
-Colorful.hex2hsl = function hex2hsl(hex) {
+Colorful.hex2Hsl = function hex2Hsl(hex) {
   return hexa2HEXA(hex).toHsl()
 }
 

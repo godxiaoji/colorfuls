@@ -2,15 +2,15 @@ const assert = require('assert')
 const {
   Color,
   hexa2Rgba,
-  hexa2hsla,
-  rgba2hsla,
-  rgba2hexa,
+  hexa2Hsla,
+  rgba2Hsla,
+  rgba2Hexa,
   hsla2Rgba,
   hsla2Hexa,
   hex2Rgb,
-  hex2hsl,
-  rgb2hex,
-  rgb2hsl,
+  hex2Hsl,
+  rgb2Hex,
+  rgb2Hsl,
   hsl2Rgb,
   hsl2Hex,
   mix,
@@ -25,13 +25,13 @@ describe('Color', () => {
       assert.strictEqual(hex2Rgb('#5CB1F8'), 'rgb(92, 177, 248)')
     })
     it('HEX "#5CB1F8" should be HSLA "hsl(207, 92%, 67%)"', () => {
-      assert.strictEqual(hex2hsl('#5CB1F8'), 'hsl(207, 92%, 67%)')
+      assert.strictEqual(hex2Hsl('#5CB1F8'), 'hsl(207, 92%, 67%)')
     })
     it('RGB "rgb(92, 177, 248)" should be HEX "#5CB1F8"', () => {
-      assert.strictEqual(rgb2hex('rgb(92, 177, 248)'), '#5CB1F8')
+      assert.strictEqual(rgb2Hex('rgb(92, 177, 248)'), '#5CB1F8')
     })
     it('RGB "rgb(92, 177, 248)" should be HSL "hsl(207, 92%, 67%)"', () => {
-      assert.strictEqual(rgb2hsl('rgb(92, 177, 248)'), 'hsl(207, 92%, 67%)')
+      assert.strictEqual(rgb2Hsl('rgb(92, 177, 248)'), 'hsl(207, 92%, 67%)')
     })
     it('HSL "hsl(207, 92%, 67%)" should be RGB "rgb(93, 179, 248)"', () => {
       assert.strictEqual(hsl2Rgb('hsl(207, 92%, 67%)'), 'rgb(93, 179, 248)')
@@ -45,14 +45,14 @@ describe('Color', () => {
       assert.strictEqual(hexa2Rgba('#5CB1F8FF'), 'rgba(92, 177, 248, 1)')
     })
     it('HEXA "#5CB1F8FF" should be HSLA "hsla(207, 92%, 67%, 1)"', () => {
-      assert.strictEqual(hexa2hsla('#5CB1F8FF'), 'hsla(207, 92%, 67%, 1)')
+      assert.strictEqual(hexa2Hsla('#5CB1F8FF'), 'hsla(207, 92%, 67%, 1)')
     })
     it('RGBA "rgba(92, 177, 248, 1)" should be HEXA "#5CB1F8FF"', () => {
-      assert.strictEqual(rgba2hexa('rgba(92, 177, 248, 1)'), '#5CB1F8FF')
+      assert.strictEqual(rgba2Hexa('rgba(92, 177, 248, 1)'), '#5CB1F8FF')
     })
     it('RGBA "rgba(92, 177, 248, 1)" should be HSLA "hsla(207, 92%, 67%, 1)"', () => {
       assert.strictEqual(
-        rgba2hsla('rgba(92, 177, 248, 1)'),
+        rgba2Hsla('rgba(92, 177, 248, 1)'),
         'hsla(207, 92%, 67%, 1)'
       )
     })
