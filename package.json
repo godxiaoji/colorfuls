@@ -4,6 +4,7 @@
   "description": "A small Javascript library for color conversion and manipulation. Also provides color mixin and gradient.",
   "main": "dist/colorfuls.js",
   "scripts": {
+    "lint": "eslint --fix ./src/**/*.js",
     "test": "eslint ./src/*.js && mocha",
     "build": "webpack",
     "watch": "webpack --watch"
@@ -35,11 +36,17 @@
   ],
   "devDependencies": {
     "assert": "^2.0.0",
+    "cz-conventional-changelog": "^3.3.0",
     "mocha": "^8.1.3",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
     "big.js": "^5.2.2"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

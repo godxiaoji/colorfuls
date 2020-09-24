@@ -411,9 +411,7 @@ class HSLA {
     } else if (isNumeric(degree)) {
       this._h = numberRange(parseFloat(degree), 0, 360)
     } else {
-      throw new Error(
-        `parameter should be number instead of ${typeof degree}`
-      )
+      throw new Error(`parameter should be number instead of ${typeof degree}`)
     }
     return this
   }
@@ -505,9 +503,7 @@ class HSLA {
     if (isNumber(degree)) {
       this._h = (this._h + degree + 360) % 360
     } else {
-      throw new Error(
-        `parameter should be number instead of ${typeof degree}`
-      )
+      throw new Error(`parameter should be number instead of ${typeof degree}`)
     }
     return this
   }
