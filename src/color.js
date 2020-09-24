@@ -156,19 +156,6 @@ function isBig(object) {
   return object instanceof Big
 }
 
-/**
- * 计算灰阶值
- * @param {Number} r red
- * @param {Number} g green
- * @param {Number} b blue
- * @see https://www.cnblogs.com/zhangjiansheng/p/6925722.html
- */
-function rgb2Gray(r, g, b) {
-  // 著名的心理学公式
-  // return (r * 299 + g * 587 + b * 114) / 1000
-  return (r * 38 + g * 75 + b * 15) >> 7
-}
-
 function throwPercentageLikeError(value) {
   throw new Error(
     `parameter should be number/percentage instead of ${typeof value}`
@@ -289,49 +276,6 @@ class RGBA {
    */
   opaque(ratio) {
     return this.fadeIn(ratio)
-  }
-
-  /**
-   *  反向色
-   */
-  invert() {
-    this._r = 255 - this._r
-    this._g = 255 - this._g
-    this._b = 255 - this._b
-
-    return this
-  }
-
-  /**
-   * 补充色
-   */
-  complement() {
-    return this.hsla().complement().rgba()
-  }
-
-  /**
-   * 灰阶
-   */
-  grayscale() {
-    const gray = Math.round(rgb2Gray(this._r, this._g, this._b))
-
-    this._r = gray
-    this._g = gray
-    this._b = gray
-
-    return this
-  }
-
-  isLight() {
-    return !this.isDark()
-  }
-
-  /**
-   * 是否深色调
-   * @see YIQ equation from http://24ways.org/2010/calculating-color-contrast
-   */
-  isDark() {
-    return rgb2Gray(this._r, this._g, this._b) < 128
   }
 
   hsla() {
@@ -544,35 +488,6 @@ class HSLA {
     return this
   }
 
-  /**
-   * 灰阶
-   */
-  grayscale() {
-    return this.rgba().grayscale().hsla()
-  }
-
-  /**
-   *  反向色
-   */
-  invert() {
-    return this.rgba().invert().hsla()
-  }
-
-  /**
-   * 补充色
-   */
-  complement() {
-    return this.rotate(180)
-  }
-
-  isLight() {
-    return this.rgba().isLight()
-  }
-
-  isDark() {
-    return this.rgba().isDark()
-  }
-
   rgba() {
     const { r, g, b } = _hsl2rgb(this._h, this._s, this._l)
 
@@ -634,35 +549,6 @@ class HEXA {
 
   hexa() {
     return this
-  }
-
-  /**
-   * 灰阶
-   */
-  grayscale() {
-    return this.rgba().grayscale().hexa()
-  }
-
-  isLight() {
-    return this.rgba().isLight()
-  }
-
-  isDark() {
-    return this.rgba().isDark()
-  }
-
-  /**
-   *  反向色
-   */
-  invert() {
-    return this.rgba().invert().hexa()
-  }
-
-  /**
-   * 补充色
-   */
-  complement() {
-    return this.hsla().complement().hexa()
   }
 
   rgba() {

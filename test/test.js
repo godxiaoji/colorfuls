@@ -15,7 +15,12 @@ const {
   hsl2Hex,
   mix,
   gradient,
-  linearGradient
+  linearGradient,
+  invert,
+  complement,
+  isDark,
+  isLight,
+  grayscale
 } = require('../dist/colorfuls')
 
 describe('Color', () => {
@@ -68,13 +73,23 @@ describe('Color', () => {
   })
 
   describe('Manipulation', () => {
-    // rgba
-    it('rgba.invert(): rgb(0, 100, 255) -> rgb(255, 155, 0)', () => {
-      assert.strictEqual(
-        Color('rgb(0, 100, 255)').invert().toRgb(),
-        'rgb(255, 155, 0)'
-      )
+    it('grayscale(#5CBF54) -> #959595', () => {
+      assert.strictEqual(grayscale('#5CBF54').toHex(), '#959595')
     })
+    it('complement(#7FFFD4): #7FFFD4 -> #FF7FAA', () => {
+      assert.strictEqual(complement('#7FFFD4').toHex(), '#FF7FAA')
+    })
+    it('invert(rgb(0, 100, 255)): -> rgb(255, 155, 0)', () => {
+      assert.strictEqual(invert('rgb(0, 100, 255)').toRgb(), 'rgb(255, 155, 0)')
+    })
+    it('isDark(rgb(255, 155, 0)): -> true', () => {
+      assert.strictEqual(isDark('rgb(255, 155, 0)'), false)
+    })
+    it('isLight(rgb(255, 155, 0)): -> false', () => {
+      assert.strictEqual(isLight('rgb(255, 155, 0)'), true)
+    })
+
+    // rgba
     it('rgba.fade(): rgba(10, 10, 10, 0.8) -> rgba(10, 10, 10, 0.4)', () => {
       assert.strictEqual(
         Color('rgba(10, 10, 10, 0.8)').fade(0.5).toRgba(),
@@ -88,16 +103,7 @@ describe('Color', () => {
       )
     })
 
-    // hexa
-    it('hexa.grayscale(): #5CBF54 -> #959595', () => {
-      assert.strictEqual(Color('#5CBF54').grayscale().toHex(), '#959595')
-    })
-    it('hexa.complement(): #7FFFD4 -> #FF7FAA', () => {
-      assert.strictEqual(Color('#7FFFD4').complement().toHex(), '#FF7FAA')
-    })
-
     // hsla
-
     it('hsla.rotate(180): hsl(60, 20%, 20%) -> hsl(240, 20%, 20%)', () => {
       assert.strictEqual(
         Color('hsl(60, 20%, 20%)').rotate(180).toHsl(),

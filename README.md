@@ -110,16 +110,14 @@ color.lighten(0.5)     // hsla(300, 38%, 50%, 0.8) -> hsla(300, 38%, 75%, 0.8)
 color.darken(0.5)      // hsla(300, 38%, 75%, 0.8) -> hsla(300, 38%, 38%, 0.8)
 ```
 
-#### Common
+#### Match
 
 ```
-const color = Color('rgb(0, 100, 255)')
-
-color.invert()         // rgb(0, 100, 255) -> rgb(255, 155, 0)
-color.complement()     // rgb(255, 155, 0) -> rgb(255, 155, 0)
-color.isLight()        // -> true
-color.isDark()         // -> false
-color.grayscale()      // rgb(255, 155, 0) -> rgb(166, 166, 166)
+invert('rgb(0, 100, 255)')         // -> rgb(255, 155, 0)
+complement('rgb(255, 155, 0)')     // -> rgb(255, 155, 0)
+isLight('rgb(255, 155, 0)')        // -> true
+isDark('rgb(255, 155, 0)')         // -> false
+grayscale('rgb(255, 155, 0)')      // -> rgb(166, 166, 166)
 ```
 
 ### mix
