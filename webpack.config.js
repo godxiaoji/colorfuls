@@ -11,5 +11,14 @@ module.exports = {
     umdNamedDefine: true,
     globalObject: 'this'
   },
-  mode: 'production'
+  mode: 'production',
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader'
+      }
+    ]
+  }
 }

@@ -126,7 +126,7 @@ export function bigNumberRange(value, min = 0, max = 1) {
  * @param {String|number} value 100%/0.1
  */
 export function percentage2Length(value) {
-  if (isString(value) && value.endsWith('%')) {
+  if (isString(value) && value.substr(value.length - 1, 1) === '%') {
     return parseFloat(value) / 100
   }
 

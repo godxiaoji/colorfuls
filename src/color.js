@@ -594,7 +594,7 @@ class HEXA {
 }
 
 function value2Binary(value) {
-  if (isString(value) && value.endsWith('%')) {
+  if (isString(value) && value.substr(value.length - 1, 1) === '%') {
     value = (255 * parseFloat(value)) / 100
   } else {
     value = parseFloat(value)

@@ -14,21 +14,6 @@
     "type": "git",
     "url": "https://github.com/godxiaoji/colorfuls.git"
   },
-  "release": {
-    "prepare": [
-      {
-        "path": "@semantic-release/changelog"
-      },
-      [
-        "@semantic-release/git",
-        {
-          "assets": [
-            "CHANGELOG.md"
-          ]
-        }
-      ]
-    ]
-  },
   "keywords": [
     "color",
     "rgb",
@@ -51,7 +36,11 @@
     "src/"
   ],
   "devDependencies": {
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
     "assert": "^2.0.0",
+    "babel-loader": "^8.1.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.9.0",
     "mocha": "^8.1.3",

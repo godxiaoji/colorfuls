@@ -144,13 +144,13 @@ describe('Color', () => {
 
   // mix
   describe('Mix', () => {
-    it(`mix(#f00, #00f) -> #800080`, () => {
+    it('mix(#f00, #00f) -> #800080', () => {
       assert.strictEqual(mix('#f00', '#00f').toHex(), '#800080')
     })
-    it(`mix(#f00, #00f, 25%) -> #3F00BF`, () => {
+    it('mix(#f00, #00f, 25%) -> #3F00BF', () => {
       assert.strictEqual(mix('#f00', '#00f', '25%').toHex(), '#4000BF')
     })
-    it(`mix(rgba(255, 0, 0, 0.5), #00f) -> rgba(64, 0, 191, 0.75)`, () => {
+    it('mix(rgba(255, 0, 0, 0.5), #00f) -> rgba(64, 0, 191, 0.75)', () => {
       assert.strictEqual(
         mix('rgba(255, 0, 0, 0.5)', '#00f').toRgba(),
         'rgba(64, 0, 191, 0.75)'
@@ -160,28 +160,28 @@ describe('Color', () => {
 
   // gradient
   describe('Gradient', () => {
-    it(`gradient(#000, #fff).step(0.5) -> #808080`, () => {
+    it('gradient(#000, #fff).step(0.5) -> #808080', () => {
       assert.strictEqual(gradient('#000', '#fff').step(0.5).toHex(), '#808080')
     })
-    it(`gradient(#000, #fff).steps(3) -> #000000, #808080, #FFFFFF`, () => {
+    it('gradient(#000, #fff).steps(3) -> #000000, #808080, #FFFFFF', () => {
       assert.strictEqual(
         gradient('#000', '#fff').steps(3).toHexs().join(', '),
         '#000000, #808080, #FFFFFF'
       )
     })
-    it(`linearGradient(#000, #fff, #000).steps(3) -> #000000, #FFFFFF, #000000`, () => {
+    it('linearGradient(#000, #fff, #000).steps(3) -> #000000, #FFFFFF, #000000', () => {
       assert.strictEqual(
         linearGradient('#000', '#fff', '#000').steps(3).toHexs().join(', '),
         '#000000, #FFFFFF, #000000'
       )
     })
-    it(`linearGradient(#000, #fff, #000).steps(5) -> #000000, #808080, #FFFFFF, #808080, #000000`, () => {
+    it('linearGradient(#000, #fff, #000).steps(5) -> #000000, #808080, #FFFFFF, #808080, #000000', () => {
       assert.strictEqual(
         linearGradient('#000', '#fff', '#000').steps(5).toHexs().join(', '),
         '#000000, #808080, #FFFFFF, #808080, #000000'
       )
     })
-    it(`linearGradient(#000, #111, #222, #333, [#444, 0.4], #fff).steps(11) -> #000000, #111111, #222222, #333333, #444444, #636363, #828282, #A2A2A2, #C1C1C1, #E0E0E0, #FFFFFF`, () => {
+    it('linearGradient(#000, #111, #222, #333, [#444, 0.4], #fff).steps(11) -> #000000, #111111, #222222, #333333, #444444, #636363, #828282, #A2A2A2, #C1C1C1, #E0E0E0, #FFFFFF', () => {
       assert.strictEqual(
         linearGradient('#000', '#111', '#222', '#333', ['#444', '40%'], '#fff')
           .steps(11)
@@ -190,7 +190,7 @@ describe('Color', () => {
         '#000000, #111111, #222222, #333333, #444444, #636363, #828282, #A2A2A2, #C1C1C1, #E0E0E0, #FFFFFF'
       )
     })
-    it(`linearGradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 1)).steps(5) -> rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 1)`, () => {
+    it('linearGradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 1)).steps(5) -> rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 1)', () => {
       assert.strictEqual(
         linearGradient(
           'rgba(0, 0, 0, 0)',
