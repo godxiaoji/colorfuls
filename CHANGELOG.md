@@ -1,3 +1,17 @@
+# [0.2.0](https://github.com/godxiaoji/colorfuls/compare/v0.1.1...v0.2.0) (2020-09-28)
+
+
+### Bug Fixes
+
+* **conflicts:** conflicts ([70139b9](https://github.com/godxiaoji/colorfuls/commit/70139b90312bcc87c16967070c6e88edba02f3c0))
+* **gradient:** support ie10 ([ff25fb4](https://github.com/godxiaoji/colorfuls/commit/ff25fb41dd9af9165b547871313bb6eb62d6d2fc))
+* **test:** browser test ([cdfb0f8](https://github.com/godxiaoji/colorfuls/commit/cdfb0f8a404873b2e02c48c06a4eee90d7c34a60))
+
+
+### Features
+
+* **test:** support browser test ([c14ec05](https://github.com/godxiaoji/colorfuls/commit/c14ec0587e0801258e4185dbca6dd889edb9501e))
+
 ## [0.1.2](https://github.com/godxiaoji/colorfuls/compare/v0.1.1...v0.1.2) (2020-09-28)
 
 
