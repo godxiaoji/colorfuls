@@ -1,3 +1,10 @@
+## [0.1.2](https://github.com/godxiaoji/colorfuls/compare/v0.1.1...v0.1.2) (2020-09-28)
+
+
+### Bug Fixes
+
+* **test:** browser test ([cdfb0f8](https://github.com/godxiaoji/colorfuls/commit/cdfb0f8a404873b2e02c48c06a4eee90d7c34a60))
+
 ## [0.1.1](https://github.com/godxiaoji/colorfuls/compare/v0.1.0...v0.1.1) (2020-09-27)
 
 
