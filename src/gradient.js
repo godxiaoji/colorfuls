@@ -22,9 +22,7 @@ function getStepColor(p, colors, gamma) {
       start = color2Array(prevItem.color, gamma)
       end = color2Array(item.color, gamma)
 
-      p = p
-        .minus(prevItem.percentage)
-        .div(item.percentage.minus(prevItem.percentage))
+      p = p.minus(prevItem.percentage).div(item.percentage.minus(prevItem.percentage))
       break
     }
   }
@@ -62,9 +60,7 @@ function parseColors(args) {
 
     if (isArray(args[i])) {
       item.color = Color(args[i][0]).rgba()
-      item.percentage = new Big(
-        numberRange(percentage2Length(args[i][1]), minPercentage, 1)
-      )
+      item.percentage = new Big(numberRange(percentage2Length(args[i][1]), minPercentage, 1))
     } else {
       item.color = Color(args[i]).rgba()
     }
@@ -85,9 +81,7 @@ function parseColors(args) {
           .div(unknownPercentageIndexs.length + 1)
 
         unknownPercentageIndexs.forEach((colorIndex, k) => {
-          colors[colorIndex].percentage = item.percentage.minus(
-            step.times(unknownPercentageIndexs.length - k)
-          )
+          colors[colorIndex].percentage = item.percentage.minus(step.times(unknownPercentageIndexs.length - k))
         })
         unknownPercentageIndexs = []
       }
@@ -105,14 +99,14 @@ function parseColors(args) {
 function steps2ColorArray(gs, method) {
   const arr = []
 
-  gs.forEach(color => {
-    arr.push(color[method]())
-  })
+  for (let i = 0; i < gs.length; i++) {
+    arr.push(gs[i][method]())
+  }
 
   return arr
 }
 
-class GradientSteps extends Array {
+class GradientSteps {
   toRgbs() {
     return steps2ColorArray(this, 'toRgb')
   }
@@ -153,10 +147,10 @@ class Gradient {
       const output = new GradientSteps()
 
       for (let i = 0; i < length; i++) {
-        output.push(
-          getStepColor(new Big(i).div(length - 1), this.colors, this.gamma)
-        )
+        output[i] = getStepColor(new Big(i).div(length - 1), this.colors, this.gamma)
       }
+
+      output.length = length
 
       return output
     }

@@ -137,9 +137,7 @@ function channelDown(channel, ratio) {
     throwPercentageLikeError(ratio)
   }
 
-  return bigNumberRange(
-    channel.times(new Big(1).minus(percentage2Length(ratio)))
-  )
+  return bigNumberRange(channel.times(new Big(1).minus(percentage2Length(ratio))))
 }
 
 function channelUp(channel, ratio) {
@@ -147,9 +145,7 @@ function channelUp(channel, ratio) {
     throwPercentageLikeError(ratio)
   }
 
-  return bigNumberRange(
-    channel.times(new Big(1).plus(percentage2Length(ratio)))
-  )
+  return bigNumberRange(channel.times(new Big(1).plus(percentage2Length(ratio))))
 }
 
 function isBig(object) {
@@ -157,9 +153,7 @@ function isBig(object) {
 }
 
 function throwPercentageLikeError(value) {
-  throw new Error(
-    `parameter should be number/percentage instead of ${typeof value}`
-  )
+  throw new Error(`parameter should be number/percentage instead of ${typeof value}`)
 }
 
 /**
@@ -293,9 +287,7 @@ class RGBA {
   }
 
   hexa() {
-    return new HEXA(
-      _rgb2hex(this._r, this._g, this._b) + decimal2Hex(this._a, 2)
-    )
+    return new HEXA(_rgb2hex(this._r, this._g, this._b) + decimal2Hex(this._a, 2))
   }
 
   toHex() {
@@ -609,19 +601,8 @@ function value2Binary(value) {
 export function rgba2RGBA(rgba) {
   let matches
 
-  if (
-    isObject(rgba) &&
-    isNumeric(rgba.r) &&
-    isNumeric(rgba.g) &&
-    isNumeric(rgba.b)
-  ) {
-    matches = [
-      null,
-      rgba.r,
-      rgba.g,
-      rgba.b,
-      isBig(rgba.a) || isNumeric(rgba.a) ? rgba.a : 1
-    ]
+  if (isObject(rgba) && isNumeric(rgba.r) && isNumeric(rgba.g) && isNumeric(rgba.b)) {
+    matches = [null, rgba.r, rgba.g, rgba.b, isBig(rgba.a) || isNumeric(rgba.a) ? rgba.a : 1]
   } else if (isRgba(rgba)) {
     matches = rgbaReg.exec(rgba.trim())
   } else {
@@ -669,8 +650,7 @@ function hue2rgb(p1, p2, hue) {
   if (hue.gt(1)) hue = hue.minus(1)
   if (hue.times(6).lt(1)) return p1.plus(p2.minus(p1).times(6).times(hue))
   if (hue.times(2).lt(1)) return p2
-  if (hue.times(3).lt(2))
-    return p1.plus(p2.minus(p1).times(new Big(2 / 3).minus(hue).times(6)))
+  if (hue.times(3).lt(2)) return p1.plus(p2.minus(p1).times(new Big(2 / 3).minus(hue).times(6)))
   return p1
 }
 
@@ -681,12 +661,7 @@ function hue2rgb(p1, p2, hue) {
 export function hsla2HSLA(hsla) {
   let matches
 
-  if (
-    isObject(hsla) &&
-    isNumber(hsla.h) &&
-    isNumeric(hsla.s) &&
-    isNumeric(hsla.l)
-  ) {
+  if (isObject(hsla) && isNumber(hsla.h) && isNumeric(hsla.s) && isNumeric(hsla.l)) {
     matches = [null, hsla.h, hsla.s, hsla.l, isNumeric(hsla.a) ? hsla.a : 1]
   } else if (isHsla(hsla)) {
     matches = hslaReg.exec(hsla.trim())
@@ -719,19 +694,11 @@ export function clone(object) {
  */
 export function Color(value) {
   if (isObject(value)) {
-    if (
-      value instanceof RGBA ||
-      value instanceof HSLA ||
-      value instanceof HEXA
-    ) {
+    if (value instanceof RGBA || value instanceof HSLA || value instanceof HEXA) {
       return clone(value)
     } else if (isNumeric(value.r) && isNumeric(value.g) && isNumeric(value.b)) {
       return rgba2RGBA(value)
-    } else if (
-      isNumber(value.h) &&
-      isLimitPercentage(value.s) &&
-      isLimitPercentage(value.l)
-    ) {
+    } else if (isNumber(value.h) && isLimitPercentage(value.s) && isLimitPercentage(value.l)) {
       return hsla2HSLA(value)
     }
   } else if (isHexa(value)) {

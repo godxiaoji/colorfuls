@@ -13,16 +13,11 @@ export default function mix(color1, color2, weight) {
   const c1 = Color(color1).rgba()
   const c2 = Color(color2).rgba()
 
-  const p = new Big(
-    isUndefined(weight) ? 0.5 : numberRange(percentage2Length(weight))
-  )
+  const p = new Big(isUndefined(weight) ? 0.5 : numberRange(percentage2Length(weight)))
 
   const w = p.times(2).minus(1)
   const a = c1._a.minus(c2._a)
-  const w1 = (w.times(a).eq(-1)
-    ? w
-    : w.plus(a).div(w.times(a).plus(1)).plus(1)
-  ).div(2.0)
+  const w1 = (w.times(a).eq(-1) ? w : w.plus(a).div(w.times(a).plus(1)).plus(1)).div(2.0)
   const w2 = new Big(1).minus(w1)
 
   return rgba2RGBA({
