@@ -1,3 +1,10 @@
+## [0.1.1](https://github.com/godxiaoji/colorfuls/compare/v0.1.0...v0.1.1) (2020-09-27)
+
+
+### Bug Fixes
+
+* **release:** add release ([2e869cf](https://github.com/godxiaoji/colorfuls/commit/2e869cff0118b361754b121ab62eb0935e42efed))
+
 #Changelog
 
 # [0.1.0](https://github.com/godxiaoji/colorfuls/compare/v0.0.6...v0.1.0) (2020-09-27)
