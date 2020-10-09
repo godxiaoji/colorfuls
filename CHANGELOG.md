@@ -1,3 +1,10 @@
+# [0.4.0](https://github.com/godxiaoji/colorfuls/compare/v0.3.1...v0.4.0) (2020-10-09)
+
+
+### Features
+
+* **translate:** add translate ([b181389](https://github.com/godxiaoji/colorfuls/commit/b181389811a9459ab0d7383c19bd981ba7551327))
+
 ## [0.3.1](https://github.com/godxiaoji/colorfuls/compare/v0.3.0...v0.3.1) (2020-10-09)
 
 
