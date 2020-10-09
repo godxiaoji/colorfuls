@@ -10,7 +10,8 @@ import {
   isUndefined,
   bigRange,
   big,
-  isBig
+  isBig,
+  big2Percentage
 } from './util'
 
 // PS：不会写比较骚的正则，这个虽然长，但是容易看懂
@@ -443,6 +444,11 @@ class RGBA extends BaseColor {
   toArray() {
     return [this._r, this._g, this._b, this.alpha()]
   }
+
+  toObject() {
+    const [r, g, b, a] = this.toArray()
+    return { r, g, b, a }
+  }
 }
 
 /**
@@ -469,7 +475,7 @@ class HSA extends BaseColor {
    */
   hue(degree) {
     if (isUndefined(degree)) {
-      return Math.round(this._h)
+      return Math.round(this._h) + '°'
     } else if (isNumeric(degree)) {
       this._h = numberRange(parseFloat(degree), 0, 360)
     } else {
@@ -484,7 +490,7 @@ class HSA extends BaseColor {
    */
   saturation(value) {
     if (isUndefined(value)) {
-      return this._s.times(100).round().toFixed(0) + '%'
+      return big2Percentage(this._s)
     } else if (isNumeric(value)) {
       this._s = channelLength(value)
     } else {
@@ -552,7 +558,7 @@ class HSLA extends HSA {
    */
   lightness(value) {
     if (isUndefined(value)) {
-      return this._l.times(100).round().toFixed(0) + '%'
+      return big2Percentage(this._l)
     } else if (isNumeric(value)) {
       this._l = channelLength(value)
     } else {
@@ -590,11 +596,11 @@ class HSLA extends HSA {
   }
 
   toHsl() {
-    return `hsl(${this.hue()}, ${this.saturation()}, ${this.lightness()})`
+    return `hsl(${parseInt(this.hue())}, ${this.saturation()}, ${this.lightness()})`
   }
 
   toHsla() {
-    return `hsla(${this.hue()}, ${this.saturation()}, ${this.lightness()}, ${this.alpha()})`
+    return `hsla(${parseInt(this.hue())}, ${this.saturation()}, ${this.lightness()}, ${this.alpha()})`
   }
 
   toString() {
@@ -605,8 +611,20 @@ class HSLA extends HSA {
     return [this.hue(), this.saturation(), this.lightness(), this.alpha()]
   }
 
+  toObject() {
+    const [h, s, l, a] = this.toArray()
+
+    return { h, s, l, a }
+  }
+
   toNumberArray() {
-    return [this.hue(), parseFloat(this._s), parseFloat(this._l), this.alpha()]
+    return [parseInt(this.hue()), parseFloat(this._s), parseFloat(this._l), this.alpha()]
+  }
+
+  toNumberObject() {
+    const [h, s, l, a] = this.toNumberArray()
+
+    return { h, s, l, a }
   }
 }
 
@@ -633,7 +651,7 @@ class HSVA extends HSA {
    */
   value(value) {
     if (isUndefined(value)) {
-      return this._v.times(100).round().toFixed(0) + '%'
+      return big2Percentage(this._v)
     } else if (isNumeric(value)) {
       this._v = channelLength(value)
     } else {
@@ -654,11 +672,11 @@ class HSVA extends HSA {
   }
 
   toHsv() {
-    return `${this.hue()}°, ${this.saturation()}, ${this.value()}`
+    return `${this.hue()}, ${this.saturation()}, ${this.value()}`
   }
 
   toHsva() {
-    return `${this.hue()}°, ${this.saturation()}, ${this.value()}, ${this.alpha()}`
+    return `${this.hue()}, ${this.saturation()}, ${this.value()}, ${this.alpha()}`
   }
 
   toString() {
@@ -669,8 +687,20 @@ class HSVA extends HSA {
     return [this.hue(), this.saturation(), this.value(), this.alpha()]
   }
 
+  toObject() {
+    const [h, s, v, a] = this.toArray()
+
+    return { h, s, v, a }
+  }
+
   toNumberArray() {
-    return [this.hue(), parseFloat(this._s), parseFloat(this._v), this.alpha()]
+    return [parseInt(this.hue()), parseFloat(this._s), parseFloat(this._v), this.alpha()]
+  }
+
+  toNumberObject() {
+    const [h, s, v, a] = this.toNumberArray()
+
+    return { h, s, v, a }
   }
 }
 

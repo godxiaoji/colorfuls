@@ -1,6 +1,72 @@
 /* global should, Colorfuls */
 
 describe('Color', function() {
+  // getter
+  describe('Getter', function() {
+    var color = Colorfuls('rgba(92, 177, 248, 0.5)')
+    describe('rgba: "rgba(92, 177, 248, 0.5)" -> RGBA', function() {
+      it('rgba.red() -> 92', function() {
+        should.equal(color.red(), 92)
+      })
+      it('rgba.green() -> 177', function() {
+        should.equal(color.green(), 177)
+      })
+      it('rgba.blue() -> 248', function() {
+        should.equal(color.blue(), 248)
+      })
+      it('rgba.alpha() -> 0.5', function() {
+        should.equal(color.alpha(), 0.5)
+      })
+      it('rgba.toArray() -> "92,177,248,0.5"', function() {
+        should.equal(color.toArray().toString(), '92,177,248,0.5')
+      })
+    })
+
+    var hslColor = Colorfuls('hsl(207, 92%, 67%)')
+    describe('hsl: "hsl(207, 92%, 67%)" -> HSLA', function() {
+      it('hsl.hue() -> "207°"', function() {
+        should.equal(hslColor.hue(), '207°')
+      })
+      it('hsl.saturation() -> "92%"', function() {
+        should.equal(hslColor.saturation(), '92%')
+      })
+      it('hsl.lightness() -> "67%"', function() {
+        should.equal(hslColor.lightness(), '67%')
+      })
+      it('hsl.alpha() -> 1', function() {
+        should.equal(hslColor.alpha(), 1)
+      })
+      it('hsl.toArray() -> "207°,92%,67%,1"', function() {
+        should.equal(hslColor.toArray().toString(), '207°,92%,67%,1')
+      })
+      it('hsl.toNumberArray() -> "207,0.92,0.67,1"', function() {
+        should.equal(hslColor.toNumberArray().toString(), '207,0.92,0.67,1')
+      })
+    })
+
+    var hsvColor = Colorfuls({ h: 207, s: '63%', v: '97%' })
+    describe('hsv: "207°, 63%, 97%" -> HSVA', function() {
+      it('hsv.hue() -> "207°"', function() {
+        should.equal(hsvColor.hue(), '207°')
+      })
+      it('hsv.saturation() -> "63%"', function() {
+        should.equal(hsvColor.saturation(), '63%')
+      })
+      it('hsv.value() -> "97%"', function() {
+        should.equal(hsvColor.value(), '97%')
+      })
+      it('hsv.alpha() -> 1', function() {
+        should.equal(hsvColor.alpha(), 1)
+      })
+      it('hsv.toArray() -> "207°,63%,97%,1"', function() {
+        should.equal(hsvColor.toArray().toString(), '207°,63%,97%,1')
+      })
+      it('hsv.toNumberArray() -> "207,0.63,0.97,1"', function() {
+        should.equal(hsvColor.toNumberArray().toString(), '207,0.63,0.97,1')
+      })
+    })
+  })
+
   describe('Conversion', function() {
     // hex rgb hsl hsv
     it('HEX "#5CB1F8" should be RGB "rgb(92, 177, 248)"', function() {

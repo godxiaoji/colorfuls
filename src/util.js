@@ -8,6 +8,10 @@ export function isBig(object) {
   return object instanceof Big
 }
 
+export function big2Percentage(bigNumber) {
+  return bigNumber.times(100).round().toFixed(0) + '%'
+}
+
 /**
  * 是否数值，这里会对排除无穷大/无穷小的情况
  * @param {any} object 值

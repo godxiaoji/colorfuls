@@ -76,20 +76,20 @@ color.toArray()       // ['FF', 'FF', 'FF', '80']
 
 // HSLA
 color = color.hsla()  // -> new HSLA
-color.hue()           // 0
+color.hue()           // 0°
 color.saturation()    // 0%
 color.lightness()     // 100%
 color.alpha()         // 0.5
-color.toArray()       // [0, '0%', '100%', 0.5]
+color.toArray()       // ['0°', '0%', '100%', 0.5]
 color.toNumberArray() // [0, 0, 1, 0.5]
 
 // HSVA
 color = color.hsva()  // -> new HSVA
-color.hue()           // 0
+color.hue()           // 0°
 color.saturation()    // 0%
 color.value()         // 100%
 color.alpha()         // 0.5
-color.toArray()       // [0, '0%', '100%', 0.5]
+color.toArray()       // ['0°', '0%', '100%', 0.5]
 color.toNumberArray() // [0, 0, 1, 0.5]
 
 ```
