@@ -27,7 +27,7 @@ import {Color, gradient, mix, linearGradient} from 'colorfuls'
 
 ### Constructors
 
-Support rgb/rgba, hex/hexa and hsl/hsla.
+Support rgb/rgba, hex/hexa, hsl/hsla and hsv/hsva.
 
 ```
 const color = Color('rgba(255, 255, 255, 0.5)')           // -> new RGBA
@@ -36,6 +36,7 @@ const color = Color('#5CB1F8')                            // -> new HEXA
 const color = Color('#fff')                               // -> new HEXA
 const color = Color('hsl(207, 92%, 67%)')                 // -> new HSLA
 const color = Color({h: 207, s: '92%', l: '67%', a: 0.5}) // -> new HSLA
+const color = Color({h: 106, s: '96%', v: '82%', a: 0.5}) // -> new HSVA
 const cloneColor = Color(color)                           // -> clone
 ```
 
@@ -52,27 +53,44 @@ const hexaColor = hslaColor.hexa()                        // -> new HEXA
 ```
 const color = Color('rgba(255, 255, 255, 0.5)') // -> new RGBA
 
-color.toRgb()        // rgb(255, 255, 255)
-color.toRgba()       // rgba(255, 255, 255, 0.5)
-color.toHex()        // #FFFFFF
-color.toRgba()       // #FFFFFF80
-color.toHsl()        // hsl(0, 0%, 100%)
-color.toHsla()       // hsla(0, 0%, 100%, 0.5)
+color.toRgb()         // rgb(255, 255, 255)
+color.toRgba()        // rgba(255, 255, 255, 0.5)
+color.toHex()         // #FFFFFF
+color.toRgba()        // #FFFFFF80
+color.toHsl()         // hsl(0, 0%, 100%)
+color.toHsla()        // hsla(0, 0%, 100%, 0.5)
+color.toHsv()         // 0°, 0%, 100%
+color.toHsva()        // 0°, 0%, 100%, 0.5
 
 // RGBA
-color.red()          // 255
-color.green()        // 255
-color.blue()         // 255
-color.alpha()        // 0.5
-color.toArray()      // [255, 255, 255, 0.5]
+color.red()           // 255
+color.green()         // 255
+color.blue()          // 255
+color.alpha()         // 0.5
+color.toArray()       // [255, 255, 255, 0.5]
+
+// HEXA
+color = color.hexa()
+color.alpha()         // 0.5
+color.toArray()       // ['FF', 'FF', 'FF', '80']
 
 // HSLA
-color = color.hsla() // -> new HSLA
-color.hue()          // 0
-color.saturation()   // 0%
-color.lightness()    // 100%
-color.alpha()        // 0.5
-color.toArray()      // [0, '0%', '100%', 0.5]
+color = color.hsla()  // -> new HSLA
+color.hue()           // 0
+color.saturation()    // 0%
+color.lightness()     // 100%
+color.alpha()         // 0.5
+color.toArray()       // [0, '0%', '100%', 0.5]
+color.toNumberArray() // [0, 0, 1, 0.5]
+
+// HSVA
+color = color.hsva()  // -> new HSVA
+color.hue()           // 0
+color.saturation()    // 0%
+color.value()         // 100%
+color.alpha()         // 0.5
+color.toArray()       // [0, '0%', '100%', 0.5]
+color.toNumberArray() // [0, 0, 1, 0.5]
 
 ```
 

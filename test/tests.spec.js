@@ -2,44 +2,71 @@
 
 describe('Color', function() {
   describe('Conversion', function() {
-    // hex rgb rgba
+    // hex rgb hsl hsv
     it('HEX "#5CB1F8" should be RGB "rgb(92, 177, 248)"', function() {
-      should.equal(Colorfuls.hex2Rgb('#5CB1F8'), 'rgb(92, 177, 248)')
+      should.equal(Colorfuls('#5CB1F8').toRgb(), 'rgb(92, 177, 248)')
     })
-    it('HEX "#5CB1F8" should be HSLA "hsl(207, 92%, 67%)"', function() {
-      should.equal(Colorfuls.hex2Hsl('#5CB1F8'), 'hsl(207, 92%, 67%)')
+    it('HEX "#5CB1F8" should be HSL "hsl(207, 92%, 67%)"', function() {
+      should.equal(Colorfuls('#5CB1F8').toHsl(), 'hsl(207, 92%, 67%)')
+    })
+    it('HEX "#5CB1F8" should be HSV "207°, 63%, 97%"', function() {
+      should.equal(Colorfuls('#5CB1F8').toHsv(), '207°, 63%, 97%')
     })
     it('RGB "rgb(92, 177, 248)" should be HEX "#5CB1F8"', function() {
-      should.equal(Colorfuls.rgb2Hex('rgb(92, 177, 248)'), '#5CB1F8')
+      should.equal(Colorfuls('rgb(92, 177, 248)').toHex(), '#5CB1F8')
     })
     it('RGB "rgb(92, 177, 248)" should be HSL "hsl(207, 92%, 67%)"', function() {
-      should.equal(Colorfuls.rgb2Hsl('rgb(92, 177, 248)'), 'hsl(207, 92%, 67%)')
+      should.equal(Colorfuls('rgb(92, 177, 248)').toHsl(), 'hsl(207, 92%, 67%)')
+    })
+    it('RGB "rgb(92, 177, 248)" should be HSV "207°, 63%, 97%"', function() {
+      should.equal(Colorfuls('rgb(92, 177, 248)').toHsv(), '207°, 63%, 97%')
     })
     it('HSL "hsl(207, 92%, 67%)" should be RGB "rgb(93, 179, 248)"', function() {
-      should.equal(Colorfuls.hsl2Rgb('hsl(207, 92%, 67%)'), 'rgb(93, 179, 248)')
+      should.equal(Colorfuls('hsl(207, 92%, 67%)').toRgb(), 'rgb(93, 179, 248)')
     })
     it('HSL "hsl(207, 92%, 67%)" should be HEX "#5DB3F8"', function() {
-      should.equal(Colorfuls.hsl2Hex('hsl(207, 92%, 67%)'), '#5DB3F8')
+      should.equal(Colorfuls('hsl(207, 92%, 67%)').toHex(), '#5DB3F8')
+    })
+    it('HSL "hsl(207, 92%, 67%)" should be HSV "207°, 63%, 97%"', function() {
+      should.equal(Colorfuls('hsl(207, 92%, 67%)').toHsv(), '207°, 63%, 97%')
+    })
+    it('HSV "207°, 63%, 97%" should be RGB "rgb(92, 177, 248)"', function() {
+      should.equal(Colorfuls({ h: 207, s: '63%', v: '97%' }).toRgb(), 'rgb(92, 177, 247)')
+    })
+    it('HSV "207°, 63%, 97%" should be HEX "#5CB1F8"', function() {
+      should.equal(Colorfuls({ h: 207, s: '63%', v: '97%' }).toHex(), '#5CB1F7')
+    })
+    it('HSV "207°, 63%, 97%" should be HSL "hsl(207, 91%, 66%)"', function() {
+      should.equal(Colorfuls({ h: 207, s: '63%', v: '97%' }).toHsl(), 'hsl(207, 91%, 66%)')
     })
 
     // rgba hexa hsla
     it('HEXA "#5CB1F8FF" should be RGBA "rgba(92, 177, 248, 1)"', function() {
-      should.equal(Colorfuls.hexa2Rgba('#5CB1F8FF'), 'rgba(92, 177, 248, 1)')
+      should.equal(Colorfuls('#5CB1F8FF').toRgba(), 'rgba(92, 177, 248, 1)')
     })
     it('HEXA "#5CB1F8FF" should be HSLA "hsla(207, 92%, 67%, 1)"', function() {
-      should.equal(Colorfuls.hexa2Hsla('#5CB1F8FF'), 'hsla(207, 92%, 67%, 1)')
+      should.equal(Colorfuls('#5CB1F8FF').toHsla(), 'hsla(207, 92%, 67%, 1)')
     })
     it('RGBA "rgba(92, 177, 248, 1)" should be HEXA "#5CB1F8FF"', function() {
-      should.equal(Colorfuls.rgba2Hexa('rgba(92, 177, 248, 1)'), '#5CB1F8FF')
+      should.equal(Colorfuls('rgba(92, 177, 248, 1)').toHexa(), '#5CB1F8FF')
     })
     it('RGBA "rgba(92, 177, 248, 1)" should be HSLA "hsla(207, 92%, 67%, 1)"', function() {
-      should.equal(Colorfuls.rgba2Hsla('rgba(92, 177, 248, 1)'), 'hsla(207, 92%, 67%, 1)')
+      should.equal(Colorfuls('rgba(92, 177, 248, 1)').toHsla(), 'hsla(207, 92%, 67%, 1)')
     })
     it('HSLA "hsla(207, 92%, 67%, 1)" should be RGBA "rgba(93, 179, 248, 1)"', function() {
-      should.equal(Colorfuls.hsla2Rgba('hsla(207, 92%, 67%, 1)'), 'rgba(93, 179, 248, 1)')
+      should.equal(Colorfuls('hsla(207, 92%, 67%, 1)').toRgba(), 'rgba(93, 179, 248, 1)')
     })
     it('HSLA "hsla(207, 92%, 67%, 1)" should be HEXA "#5DB3F8FF"', function() {
-      should.equal(Colorfuls.hsla2Hexa('hsla(207, 92%, 67%, 1)'), '#5DB3F8FF')
+      should.equal(Colorfuls('hsla(207, 92%, 67%, 1)').toHexa(), '#5DB3F8FF')
+    })
+    it('HSVA "106°, 96%, 82%, 0.55" should be RGBA "rgba(55, 209, 8, 0.55)"', function() {
+      should.equal(Colorfuls({ h: 106, s: '96%', v: '82%', a: 0.55 }).toRgba(), 'rgba(55, 209, 8, 0.55)')
+    })
+    it('HSVA "106°, 96%, 82%, 0.55" should be HEXA "#37D1088C"', function() {
+      should.equal(Colorfuls({ h: 106, s: '96%', v: '82%', a: 0.55 }).toHexa(), '#37D1088C')
+    })
+    it('HSVA "106°, 96%, 82%, 0.55" should be HSLA "hsla(106, 92%, 43%, 0.55)"', function() {
+      should.equal(Colorfuls({ h: 106, s: '96%', v: '82%', a: 0.55 }).toHsla(), 'hsla(106, 92%, 43%, 0.55)')
     })
   })
 

@@ -1,10 +1,9 @@
 import { clone, Color, rgba2RGBA } from './color'
-import { isArray, isNumber, numberRange, percentage2Length } from './util'
-import Big from 'big.js/big.mjs'
+import { isArray, isNumber, numberRange, percentage2Length, big } from './util'
 
 function color2Array(color, gamma) {
   return color.toArray().map((channel, k) => {
-    return (k === 3 ? new Big(channel) : new Big(channel).div(255)).pow(gamma)
+    return (k === 3 ? big(channel) : big(channel).div(255)).pow(gamma)
   })
 }
 
@@ -31,7 +30,7 @@ function getStepColor(p, colors, gamma) {
 
   for (let i = 0; i < 4; i++) {
     const channel = start[i]
-      .times(new Big(1).minus(p))
+      .times(big(1).minus(p))
       .plus(end[i].times(p))
       .pow(1 / gamma)
 
@@ -60,15 +59,15 @@ function parseColors(args) {
 
     if (isArray(args[i])) {
       item.color = Color(args[i][0]).rgba()
-      item.percentage = new Big(numberRange(percentage2Length(args[i][1]), minPercentage, 1))
+      item.percentage = big(numberRange(percentage2Length(args[i][1]), minPercentage, 1))
     } else {
       item.color = Color(args[i]).rgba()
     }
 
     if (i === 0) {
-      item.percentage = new Big(0)
+      item.percentage = big(0)
     } else if (i === len - 1) {
-      item.percentage = new Big(1)
+      item.percentage = big(1)
     }
 
     if (item.percentage === null) {
@@ -147,7 +146,7 @@ class Gradient {
       const output = new GradientSteps()
 
       for (let i = 0; i < length; i++) {
-        output[i] = getStepColor(new Big(i).div(length - 1), this.colors, this.gamma)
+        output[i] = getStepColor(big(i).div(length - 1), this.colors, this.gamma)
       }
 
       output.length = length
@@ -161,7 +160,7 @@ class Gradient {
   step(value) {
     const p = numberRange(percentage2Length(value))
 
-    return getStepColor(new Big(p), this.colors, this.gamma)
+    return getStepColor(big(p), this.colors, this.gamma)
   }
 }
 

@@ -1,5 +1,13 @@
 import Big from 'big.js/big.mjs'
 
+export function big(number) {
+  return new Big(number)
+}
+
+export function isBig(object) {
+  return object instanceof Big
+}
+
 /**
  * 是否数值，这里会对排除无穷大/无穷小的情况
  * @param {any} object 值
@@ -85,14 +93,14 @@ export function decimal2Hex(num, width) {
     num = Math.floor(num / 16)
   }
   if (typeof width === 'undefined' || width <= s.length) {
-    return s
+    return s.toUpperCase()
   }
   let delta = width - s.length
   let padding = ''
   while (delta-- > 0) {
     padding += '0'
   }
-  return padding + s
+  return (padding + s).toUpperCase()
 }
 
 /**
@@ -111,11 +119,11 @@ export function numberRange(value, min = 0, max = 1) {
  * @param {Number} min
  * @param {Number} max
  */
-export function bigNumberRange(value, min = 0, max = 1) {
+export function bigRange(value, min = 0, max = 1) {
   if (value.gt(max)) {
-    return new Big(max)
+    return big(max)
   } else if (value.lt(min)) {
-    return new Big(min)
+    return big(min)
   }
 
   return value
