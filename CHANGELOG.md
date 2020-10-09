@@ -1,3 +1,10 @@
+# [0.3.0](https://github.com/godxiaoji/colorfuls/compare/v0.2.0...v0.3.0) (2020-10-09)
+
+
+### Features
+
+* **hsva:** support hsv/hsva ([2dc82f8](https://github.com/godxiaoji/colorfuls/commit/2dc82f880cdb214cfa6a181e962fa06cf72a5b14))
+
 # [0.2.0](https://github.com/godxiaoji/colorfuls/compare/v0.1.1...v0.2.0) (2020-09-28)
 
 
