@@ -1,3 +1,10 @@
+## [0.3.1](https://github.com/godxiaoji/colorfuls/compare/v0.3.0...v0.3.1) (2020-10-09)
+
+
+### Bug Fixes
+
+* fix color getter ([4b167f8](https://github.com/godxiaoji/colorfuls/commit/4b167f84572c7089d6423146969f02ebf1c2fd3e))
+
 # [0.3.0](https://github.com/godxiaoji/colorfuls/compare/v0.2.0...v0.3.0) (2020-10-09)
 
 

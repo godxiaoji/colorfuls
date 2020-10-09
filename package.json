@@ -1,6 +1,6 @@
 {
   "name": "colorfuls",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A small Javascript library for color conversion and manipulation. Also provides color mixin and gradient.",
   "main": "dist/colorfuls.js",
   "scripts": {
