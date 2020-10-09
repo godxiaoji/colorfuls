@@ -723,7 +723,16 @@ class HEXA extends BaseColor {
       alpha = hexa.slice(7, 9)
     }
 
-    this.alpha(parseFloat(parseInt('0x' + alpha) / 255))
+    this.alphaHex(alpha)
+  }
+
+  alphaHex(value) {
+    if (isUndefined(value)) {
+      return decimal2Hex(this._a, 2)
+    } else {
+      this.alpha(parseFloat(parseInt('0x' + value) / 255))
+    }
+    return this
   }
 
   rgba() {
@@ -748,7 +757,7 @@ class HEXA extends BaseColor {
   }
 
   toHexa() {
-    return this._hex + decimal2Hex(this._a, 2)
+    return this._hex + this.alphaHex()
   }
 
   toString() {
@@ -756,7 +765,7 @@ class HEXA extends BaseColor {
   }
 
   toArray() {
-    return [this._hex.slice(1, 3), this._hex.slice(3, 5), this._hex.slice(5, 7), decimal2Hex(this._a, 2)]
+    return [this._hex.slice(1, 3), this._hex.slice(3, 5), this._hex.slice(5, 7), this.alphaHex()]
   }
 }
 

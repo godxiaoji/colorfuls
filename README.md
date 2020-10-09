@@ -22,7 +22,7 @@ $ npm install colorfuls
 ## Usage
 
 ```
-import {Color, gradient, mix, linearGradient} from 'colorfuls'
+import {Color, gradient, mix, linearGradient, translate} from 'colorfuls'
 ```
 
 ### Constructors
@@ -138,7 +138,7 @@ isDark('rgb(255, 155, 0)')         // -> false
 grayscale('rgb(255, 155, 0)')      // -> rgb(166, 166, 166)
 ```
 
-### mix
+### Mix
 
 The function mix is the same as [sass mix](https://sass-lang.com/documentation/values/colors).
 
@@ -186,6 +186,39 @@ gs.toHexs()                                  // -> ["#000000", "#404040", "#8080
 gs.toRgbs()                                  // -> ["rgb(0, 0, 0)", "rgb(64, 64, 64)", "rgb(128, 128, 128)", "rgb(191, 191, 191)", "rgb(255, 255, 255)"]
 gs.toHsls()                                  // -> ["hsl(0, 0%, 0%)", "hsl(0, 0%, 25%)", "hsl(0, 0%, 50%)", "hsl(0, 0%, 75%)", "hsl(0, 0%, 100%)"]
 gs[0].toHex()                                // -> #000000
+```
+
+### Translate
+
+The result of `translate('hsl(207, 92%, 67%, 0.55)')` : 
+
+```
+{
+  "RGB": "93, 179, 248",
+  "RGBA": "93, 179, 248, 0.55",
+  "HEXA": "#5DB3F88C",
+  "AHEX": "#8C5DB3F8",
+  "HEX": "#5DB3F8",
+  "HSL": "207°, 92%, 67%",
+  "HSLA": "207°, 92%, 67%, 0.55",
+  "HSV": "207°, 63%, 97%",
+  "HSB": "207°, 63%, 97%",
+  "WEB": {
+    "HEX": "#5DB3F8",
+    "HEXA": "#5DB3F88C",
+    "RGB": "rgb(93, 179, 248)",
+    "RGBA": "rgba(93, 179, 248, 0.55)",
+    "HSL": "hsl(207, 92%, 67%)",
+    "HSLA": "hsla(207, 92%, 67%, 0.55)"
+  },
+  "Java": "new Color(93, 179, 248, 140)",
+  ".Net": "Color.FromArgb(140, 93, 179, 248)",
+  "Android": "Color.argb(140, 93, 179, 248)",
+  "Unity3D": "new Color(0.36f, 0.70f, 0.97f, 0.55f)",
+  "OpenGL": "glColor4f(0.36f, 0.70f, 0.97f, 0.55f)",
+  "Flutter": "Color(0x8C5DB3F8)",
+  "Swift": "UIColor(red:0.36, green:0.70, blue:0.97, alpha:0.55)"
+}
 ```
 
 ## Author

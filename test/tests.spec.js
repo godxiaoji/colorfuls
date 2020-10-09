@@ -238,4 +238,33 @@ describe('Color', function() {
       )
     })
   })
+
+  // translate
+  describe('Translate', function() {
+    const translation = Colorfuls.translate('hsl(207, 92%, 67%, 0.55)')
+
+    describe('translation: translate("hsl(207, 92%, 67%, 0.55)")', function() {
+      it('translation.Flutter -> Color(0x8C5DB3F8)', function() {
+        should.equal(translation.Flutter, 'Color(0x8C5DB3F8)')
+      })
+      it('translation.Java -> new Color(93, 179, 248, 140)', function() {
+        should.equal(translation.Java, 'new Color(93, 179, 248, 140)')
+      })
+      it('translation.Android -> Color.argb(140, 93, 179, 248)', function() {
+        should.equal(translation.Android, 'Color.argb(140, 93, 179, 248)')
+      })
+      it('translation[".Net"] -> Color.FromArgb(140, 93, 179, 248)', function() {
+        should.equal(translation[".Net"], 'Color.FromArgb(140, 93, 179, 248)')
+      })
+      it('translation.OpenGL -> glColor4f(0.36f, 0.70f, 0.97f, 0.55f)', function() {
+        should.equal(translation.OpenGL, 'glColor4f(0.36f, 0.70f, 0.97f, 0.55f)')
+      })
+      it('translation.Unity3D -> new Color(0.36f, 0.70f, 0.97f, 0.55f)', function() {
+        should.equal(translation.Unity3D, 'new Color(0.36f, 0.70f, 0.97f, 0.55f)')
+      })
+      it('translation.Swift -> UIColor(red:0.36, green:0.70, blue:0.97, alpha:0.55)', function() {
+        should.equal(translation.Swift, 'UIColor(red:0.36, green:0.70, blue:0.97, alpha:0.55)')
+      })
+    })
+  })
 })
