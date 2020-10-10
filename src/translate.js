@@ -13,7 +13,7 @@ export function translate(color) {
   const rR = decimal2Ratio(r)
   const rG = decimal2Ratio(g)
   const rB = decimal2Ratio(b)
-  const rA = rgba._a.times(100).round().div(100).toFixed(2)
+  const rA = rgba._a.round(2).toFixed(2)
   const ahex = '#' + rgba.hexa().alphaHex() + rgba.toHex().substr(1)
 
   return {

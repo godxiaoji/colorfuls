@@ -1,24 +1,30 @@
-import { Color } from './color'
+import { Color, hexa2HEXA, hsla2HSLA, hsva2HSVA, rgba2RGBA, cmyk2CMYK } from './color'
 import mix from './mix'
 import gradient, { linearGradient } from './gradient'
 import { invert, complement, isDark, isLight, grayscale } from './match'
 import { translate } from './translate'
 
-const Colorful = function Colorful(...args) {
+const Colorfuls = function Colorfuls(...args) {
   return Color.apply(null, args)
 }
 
-Colorful.Color = Color
-Colorful.mix = mix
-Colorful.gradient = gradient
-Colorful.linearGradient = linearGradient
+Colorfuls.Color = Color
+Colorfuls.hexa2HEXA = hexa2HEXA
+Colorfuls.hsla2HSLA = hsla2HSLA
+Colorfuls.hsva2HSVA = hsva2HSVA
+Colorfuls.rgba2RGBA = rgba2RGBA
+Colorfuls.cmyk2CMYK = cmyk2CMYK
 
-Colorful.invert = invert
-Colorful.complement = complement
-Colorful.isDark = isDark
-Colorful.isLight = isLight
-Colorful.grayscale = grayscale
+Colorfuls.mix = mix
+Colorfuls.gradient = gradient
+Colorfuls.linearGradient = linearGradient
 
-Colorful.translate = translate
+Colorfuls.invert = invert
+Colorfuls.complement = complement
+Colorfuls.isDark = isDark
+Colorfuls.isLight = isLight
+Colorfuls.grayscale = grayscale
 
-export default Colorful
+Colorfuls.translate = translate
+
+export default Colorfuls

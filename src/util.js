@@ -12,6 +12,18 @@ export function big2Percentage(bigNumber) {
   return bigNumber.times(100).round().toFixed(0) + '%'
 }
 
+export function bigMax(...args) {
+  return args.sort(function(a, b) {
+    return parseFloat(a.minus(b))
+  }).pop()
+}
+
+export function bigMin(...args) {
+  return args.sort(function(a, b) {
+    return parseFloat(a.minus(b))
+  }).shift()
+}
+
 /**
  * 是否数值，这里会对排除无穷大/无穷小的情况
  * @param {any} object 值

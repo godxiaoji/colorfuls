@@ -98,8 +98,8 @@ hslaColor.lightness()     // 67%
 hslaColor.alpha()         // 1
 hslaColor.toArray()       // ['207°', '92%', '67%', 1]
 hslaColor.toObject()      // { h: '207°', s: '92%', l: '67%', a: 1 }
-hslaColor.toRawArray()    // [207, 0.92, 0.67, 1]
-hslaColor.toRawObject()   // { h: 207, s: 0.92, l: 0.67, a: 1 }
+hslaColor.toRawArray()    // [0.575, 0.92, 0.67, 1]
+hslaColor.toRawObject()   // { h: 0.575, s: 0.92, l: 0.67, a: 1 }
 ```
 
 #### HSVA
@@ -112,8 +112,8 @@ hsvaColor.value()         // 67%
 hsvaColor.alpha()         // 1
 hsvaColor.toArray()       // ['207°', '92%', '67%', 1]
 hsvaColor.toObject()      // { h: '207°', s: '92%', l: '67%', a: 1 }
-hsvaColor.toRawArray()    // [207, 0.92, 0.67, 1]
-hsvaColor.toRawObject()   // { h: 207, s: 0.92, l: 0.67, a: 1 }
+hsvaColor.toRawArray()    // [0.575, 0.92, 0.67, 1]
+hsvaColor.toRawObject()   // { h: 0.575, s: 0.92, l: 0.67, a: 1 }
 ```
 
 #### CMYK

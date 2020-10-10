@@ -20,6 +20,9 @@ describe('Color', function() {
       it('rgba.toArray() -> "92,177,248,0.5"', function() {
         should.equal(color.toArray().toString(), '92,177,248,0.5')
       })
+      it('rgba.toRawArray() -> "0.3607843137254902,0.6941176470588235,0.9725490196078431,0.5"', function() {
+        should.equal(color.toRawArray().toString(), '0.3607843137254902,0.6941176470588235,0.9725490196078431,0.5')
+      })
     })
 
     var hslColor = Colorfuls('hsl(207, 92%, 67%)')
@@ -39,8 +42,8 @@ describe('Color', function() {
       it('hsl.toArray() -> "207°,92%,67%,1"', function() {
         should.equal(hslColor.toArray().toString(), '207°,92%,67%,1')
       })
-      it('hsl.toRawArray() -> "207,0.92,0.67,1"', function() {
-        should.equal(hslColor.toRawArray().toString(), '207,0.92,0.67,1')
+      it('hsl.toRawArray() -> "0.575,0.92,0.67,1"', function() {
+        should.equal(hslColor.toRawArray().toString(), '0.575,0.92,0.67,1')
       })
     })
 
@@ -61,8 +64,8 @@ describe('Color', function() {
       it('hsv.toArray() -> "207°,63%,97%,1"', function() {
         should.equal(hsvColor.toArray().toString(), '207°,63%,97%,1')
       })
-      it('hsv.toRawArray() -> "207,0.63,0.97,1"', function() {
-        should.equal(hsvColor.toRawArray().toString(), '207,0.63,0.97,1')
+      it('hsv.toRawArray() -> "0.575,0.63,0.97,1"', function() {
+        should.equal(hsvColor.toRawArray().toString(), '0.575,0.63,0.97,1')
       })
     })
   })
@@ -99,11 +102,11 @@ describe('Color', function() {
     it('HSL "hsl(207, 92%, 67%)" should be HEX "#5DB3F8"', function() {
       should.equal(Colorfuls('hsl(207, 92%, 67%)').toHex(), '#5DB3F8')
     })
-    it('HSL "hsl(207, 92%, 67%)" should be HSV "207°, 63%, 97%"', function() {
-      should.equal(Colorfuls('hsl(207, 92%, 67%)').toHsv(), '207°, 63%, 97%')
+    it('HSL "hsl(207, 92%, 67%)" should be HSV "207°, 62%, 97%"', function() {
+      should.equal(Colorfuls('hsl(207, 92%, 67%)').toHsv(), '207°, 62%, 97%')
     })
-    it('HSL "hsl(207, 92%, 67%)" should be CMYK "63%, 28%, 0%, 3%"', function() {
-      should.equal(Colorfuls('hsl(207, 92%, 67%)').toCmyk(), '63%, 28%, 0%, 3%')
+    it('HSL "hsl(207, 92%, 67%)" should be CMYK "62%, 28%, 0%, 3%"', function() {
+      should.equal(Colorfuls('hsl(207, 92%, 67%)').toCmyk(), '62%, 28%, 0%, 3%')
     })
     it('HSV "207°, 63%, 97%" should be RGB "rgb(92, 177, 248)"', function() {
       should.equal(Colorfuls({ h: 207, s: '63%', v: '97%' }).toRgb(), 'rgb(92, 177, 247)')
@@ -117,17 +120,17 @@ describe('Color', function() {
     it('HSV "207°, 63%, 97%" should be CMYK "63%, 28%, 0%, 3%"', function() {
       should.equal(Colorfuls({ h: 207, s: '63%', v: '97%' }).toCmyk(), '63%, 28%, 0%, 3%')
     })
-    it('CMYK "67%, 0%, 100%, 0%" should be HEX "#5CB0F7"', function() {
+    it('CMYK "63%, 29%, 0%, 3%" should be HEX "#5CB0F7"', function() {
       should.equal(Colorfuls({ c: 0.63, m: 0.29, y: 0, k: 0.03 }).toHex(), '#5CB0F7')
     })
-    it('CMYK "67%, 0%, 100%, 0%" should be RGB "rgb(92, 177, 248)"', function() {
+    it('CMYK "63%, 29%, 0%, 3%" should be RGB "rgb(92, 177, 248)"', function() {
       should.equal(Colorfuls({ c: 0.63, m: 0.29, y: 0, k: 0.03 }).toRgb(), 'rgb(92, 176, 247)')
     })
-    it('CMYK "67%, 0%, 100%, 0%" should be HSL "hsl(207, 91%, 66%)"', function() {
-      should.equal(Colorfuls({ c: 0.63, m: 0.29, y: 0, k: 0.03 }).toHsl(), 'hsl(207, 91%, 66%)')
+    it('CMYK "63%, 29%, 0%, 3%" should be HSL "hsl(208, 91%, 66%)"', function() {
+      should.equal(Colorfuls({ c: 0.63, m: 0.29, y: 0, k: 0.03 }).toHsl(), 'hsl(208, 91%, 66%)')
     })
-    it('CMYK "67%, 0%, 100%, 0%" should be HSV "207°, 63%, 97%"', function() {
-      should.equal(Colorfuls({ c: 0.63, m: 0.29, y: 0, k: 0.03 }).toHsv(), '207°, 63%, 97%')
+    it('CMYK "63%, 29%, 0%, 3%" should be HSV "208°, 63%, 97%"', function() {
+      should.equal(Colorfuls({ c: 0.63, m: 0.29, y: 0, k: 0.03 }).toHsv(), '208°, 63%, 97%')
     })
 
     // rgba hexa hsla

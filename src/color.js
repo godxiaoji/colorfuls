@@ -1,5 +1,4 @@
 import {
-  isNumber,
   isNumeric,
   isObject,
   isString,
@@ -11,14 +10,17 @@ import {
   bigRange,
   big,
   isBig,
-  big2Percentage
+  big2Percentage,
+  bigMax,
+  bigMin
 } from './util'
 
 // PS：不会写比较骚的正则，这个虽然长，但是容易看懂
 const hexaReg = /^#([0-9a-f]{8}|[0-9a-f]{6}|[0-9a-f]{3});?$/i
-const rgbaReg = /^rgb[a]?[(][\s]*(2[0-4][0-9]|25[0-5]|[01]?[0-9][0-9]?|100%|[0-9]{1,2}%)[\s]*,[\s]*(2[0-4][0-9]|25[0-5]|[01]?[0-9][0-9]?|100%|[0-9]{1,2}%)[\s]*,[\s]*(2[0-4][0-9]|25[0-5]|[01]?[0-9][0-9]?|100%|[0-9]{1,2}%)[\s]*,?[\s]*(0?\.\d{1,2}|1|0|100%|[0-9]{1,2}%)?[)];?$/i
-const hslaReg = /^hsl[a]?[(][\s]*(360|3[0-5][0-9]|[012]?[0-9][0-9]?)[\s]*,[\s]*(100%|[0-9]{1,2}%)[\s]*,[\s]*(100%|[0-9]{1,2}%)[\s]*,?[\s]*(0?\.\d{1,2}|1|0|100%|[0-9]{1,2}%)?[)];?$/i
+const rgbaReg = /^rgb[a]?[(][\s]*(100%|[0-9]{1,2}%|2[0-4][0-9]|25[0-5]|[01]?[0-9]?[0-9])[\s]*,[\s]*(100%|[0-9]{1,2}%|2[0-4][0-9]|25[0-5]|[01]?[0-9]?[0-9])[\s]*,[\s]*(100%|[0-9]{1,2}%|2[0-4][0-9]|25[0-5]|[01]?[0-9]?[0-9])[\s]*,?[\s]*(0?\.\d{1,16}|1|0|100%|[0-9]{1,2}%)?[)];?$/i
+const hslaReg = /^hsl[a]?[(][\s]*(360|3[0-5][0-9]|[012]?[0-9][0-9]?)[\s]*,[\s]*(100%|[0-9]{1,2}%)[\s]*,[\s]*(100%|[0-9]{1,2}%)[\s]*,?[\s]*(0?\.\d{1,16}|1|0|100%|[0-9]{1,2}%)?[)];?$/i
 
+const num0 = big(0)
 const num1 = big(1)
 
 /**
@@ -49,82 +51,84 @@ export function isHsla(color) {
 }
 
 function _rgb2hsl(r, g, b) {
-  r /= 255
-  g /= 255
-  b /= 255
-
-  const max = Math.max(r, g, b)
-  const min = Math.min(r, g, b)
+  const max = bigMax(r, g, b)
+  const min = bigMin(r, g, b)
 
   let h
   let s
-  let l = (max + min) / 2
+  let l = max.plus(min).div(2)
 
-  if (max == min) {
+  if (max.eq(min)) {
     h = s = 0 // achromatic
   } else {
-    let d = max - min
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
-    switch (max) {
-      case r:
-        h = (g - b) / d + (g < b ? 6 : 0)
-        break
-      case g:
-        h = (b - r) / d + 2
-        break
-      case b:
-        h = (r - g) / d + 4
-        break
+    let d = max.minus(min)
+    s = l.gt(0.5) ? d.div(big(2).minus(max).minus(min)) : d.div(max.plus(min))
+
+    if (max.eq(r)) {
+      h = g
+        .minus(b)
+        .div(d)
+        .plus(g.lt(b) ? 6 : 0)
+    } else if (max.eq(g)) {
+      h = b.minus(r).div(d).plus(2)
+    } else {
+      h = r.minus(g).div(d).plus(4)
     }
-    h /= 6
+
+    h = h.div(6)
   }
 
   return {
-    h: h * 360,
+    h,
     s,
     l
   }
 }
 
 function _rgb2hsv(r, g, b) {
-  let h = 0
-  let s = 0
-  let v = 0
+  let h = num0
+  let s = num0
+  let v = num0
 
-  const arr = [r, g, b].sort(function(a, b) {
-    return a - b
-  })
-  const max = arr[2]
-  const min = arr[0]
-  v = max / 255
+  const max = bigMax(r, g, b)
+  const min = bigMin(r, g, b)
 
-  if (max === 0) {
-    s = 0
+  v = max
+
+  if (max.eq(0)) {
+    s = num0
   } else {
-    s = 1 - min / max
-  }
-  if (max === min) {
-    h = 0 //事实上，max===min的时候，h无论为多少都无所谓
-  } else if (max === r && g >= b) {
-    h = 60 * ((g - b) / (max - min)) + 0
-  } else if (max === r && g < b) {
-    h = 60 * ((g - b) / (max - min)) + 360
-  } else if (max === g) {
-    h = 60 * ((b - r) / (max - min)) + 120
-  } else if (max === b) {
-    h = 60 * ((r - g) / (max - min)) + 240
+    s = num1.minus(min.div(max))
   }
 
-  return { h, s, v }
+  if (max.eq(min)) {
+    h = num0
+  } else if (max.eq(r) && g.gte(b)) {
+    h = g.minus(b).div(max.minus(min)).times(60).plus(0)
+  } else if (max.eq(r) && g.lt(b)) {
+    h = g.minus(b).div(max.minus(min)).times(60).plus(360)
+  } else if (max.eq(g)) {
+    h = b.minus(r).div(max.minus(min)).times(60).plus(120)
+  } else if (max.eq(b)) {
+    h = r.minus(g).div(max.minus(min)).times(60).plus(240)
+  }
+
+  h = h.div(360)
+
+  return {
+    h,
+    s,
+    v
+  }
 }
 
 function _hsv2rgb(h, s, v) {
-  let r = 0
-  let g = 0
-  let b = 0
+  let r = num0
+  let g = num0
+  let b = num0
 
-  const i = Math.floor((h / 60) % 6)
-  const f = big(h).div(60).minus(i)
+  const i = Math.floor(h.times(6).mod(6))
+  const f = h.times(6).minus(i)
   const p = v.times(num1.minus(s))
   const q = v.times(num1.minus(s.times(f)))
   const t = v.times(num1.minus(num1.minus(f).times(s)))
@@ -165,28 +169,32 @@ function _hsv2rgb(h, s, v) {
   }
 
   return {
-    r: Math.round(r.times(255)),
-    g: Math.round(g.times(255)),
-    b: Math.round(b.times(255))
+    r,
+    g,
+    b
   }
 }
 
 function _hsv2hsl(h, s, v) {
   return {
     h,
-    s: s.times(v).div((h = big(2).minus(s).times(v)).lt(num1) ? h : big(2).minus(h)) || big(0),
+    s: s.times(v).div((h = big(2).minus(s).times(v)).lt(num1) ? h : big(2).minus(h)) || num0,
     l: h.div(2)
   }
 }
 
 function _rgb2hex(r, g, b) {
+  r = Math.round(r.times(255))
+  g = Math.round(g.times(255))
+  b = Math.round(b.times(255))
+
   let str = ((r << 16) | (g << 8) | b).toString(16)
 
   for (let i = 0, len = 6 - str.length; i < len; i++) {
     str = '0' + str
   }
 
-  return '#' + str
+  return '#' + str.toUpperCase()
 }
 
 function _hsl2rgb(h, s, l) {
@@ -194,8 +202,6 @@ function _hsl2rgb(h, s, l) {
   if (s.eq(0)) {
     r = g = b = l
   } else {
-    h = big(h).div(360)
-
     const p2 = l.lt(0.5) ? l.times(s.plus(1)) : l.plus(s).minus(l.times(s))
     const p1 = l.times(2).minus(p2)
 
@@ -205,14 +211,14 @@ function _hsl2rgb(h, s, l) {
   }
 
   return {
-    r: Math.round(r.times(255)),
-    g: Math.round(g.times(255)),
-    b: Math.round(b.times(255))
+    r,
+    g,
+    b
   }
 }
 
 function _cmyk2rgb(c, m, y, k) {
-  const t = num1.minus(k).times(255)
+  const t = num1.minus(k)
 
   return {
     r: num1.minus(c).times(t),
@@ -222,12 +228,12 @@ function _cmyk2rgb(c, m, y, k) {
 }
 
 function _rgb2cmyk(r, g, b) {
-  const k = num1.minus(big(Math.max(r, g, b)).div(255))
+  const k = num1.minus(Math.max(r, g, b))
 
   return {
-    c: num1.minus(big(r).div(255)).minus(k).div(num1.minus(k)),
-    m: num1.minus(big(g).div(255)).minus(k).div(num1.minus(k)),
-    y: num1.minus(big(b).div(255)).minus(k).div(num1.minus(k)),
+    c: num1.minus(r).minus(k).div(num1.minus(k)),
+    m: num1.minus(g).minus(k).div(num1.minus(k)),
+    y: num1.minus(b).minus(k).div(num1.minus(k)),
     k
   }
 }
@@ -270,6 +276,39 @@ function throwPercentageLikeError(value) {
   throw new Error(`parameter should be number/percentage instead of ${typeof value}`)
 }
 
+function getOrSetRatio(color, key, value) {
+  if (isUndefined(value)) {
+    return big2Percentage(color[key])
+  } else if (isNumeric(value)) {
+    color[key] = channelLength(value)
+  } else {
+    throwPercentageLikeError(value)
+  }
+  return color
+}
+
+function value2Binary(value) {
+  if (isString(value) && value.substr(value.length - 1, 1) === '%') {
+    value = channelLength(value)
+  } else {
+    value = bigRange(big(parseFloat(value)).div(255))
+  }
+  return value
+}
+
+function getOrSetChanel(color, key, value) {
+  if (isUndefined(value)) {
+    return Math.round(color[key].times(255))
+  } else if (isBig(value)) {
+    color[key] = value
+  } else if (isNumeric(value)) {
+    color[key] = value2Binary(value)
+  } else {
+    throwPercentageLikeError(value)
+  }
+  return color
+}
+
 class BaseColor {
   /**
    * 获取/设置透明度
@@ -277,13 +316,17 @@ class BaseColor {
    */
   alpha(value) {
     if (isUndefined(value)) {
-      return parseFloat(this._a)
+      return parseFloat(this._a.round(2))
     } else if (isNumeric(value) || isBig(value)) {
       this._a = parseAlpha(value)
     } else {
       throwPercentageLikeError(value)
     }
     return this
+  }
+
+  getRawAlpha() {
+    return parseFloat(this._a)
   }
 
   /**
@@ -402,14 +445,7 @@ class RGBA extends BaseColor {
    * @param {Number|Sring?} value
    */
   red(value) {
-    if (isUndefined(value)) {
-      return this._r
-    } else if (isNumeric(value)) {
-      this._r = value2Binary(value)
-    } else {
-      throwPercentageLikeError(value)
-    }
-    return this
+    return getOrSetChanel(this, '_r', value)
   }
 
   /**
@@ -417,14 +453,7 @@ class RGBA extends BaseColor {
    * @param {Number|Sring?} value
    */
   green(value) {
-    if (isUndefined(value)) {
-      return this._g
-    } else if (isNumeric(value)) {
-      this._g = value2Binary(value)
-    } else {
-      throwPercentageLikeError(value)
-    }
-    return this
+    return getOrSetChanel(this, '_g', value)
   }
 
   /**
@@ -432,14 +461,7 @@ class RGBA extends BaseColor {
    * @param {Number|Sring?} value
    */
   blue(value) {
-    if (isUndefined(value)) {
-      return this._b
-    } else if (isNumeric(value)) {
-      this._b = value2Binary(value)
-    } else {
-      throwPercentageLikeError(value)
-    }
-    return this
+    return getOrSetChanel(this, '_b', value)
   }
 
   hsla() {
@@ -455,7 +477,7 @@ class RGBA extends BaseColor {
   }
 
   hexa() {
-    return new HEXA(_rgb2hex(this._r, this._g, this._b) + decimal2Hex(this._a, 2))
+    return new HEXA(this._r, this._g, this._b, this._a)
   }
 
   cmyk() {
@@ -465,11 +487,11 @@ class RGBA extends BaseColor {
   }
 
   toRgb() {
-    return `rgb(${this._r}, ${this._g}, ${this._b})`
+    return `rgb(${this.red()}, ${this.green()}, ${this.blue()})`
   }
 
   toRgba() {
-    return `rgba(${this._r}, ${this._g}, ${this._b}, ${this.alpha()})`
+    return `rgba(${this.red()}, ${this.green()}, ${this.blue()}, ${this.alpha()})`
   }
 
   toString() {
@@ -477,11 +499,20 @@ class RGBA extends BaseColor {
   }
 
   toArray() {
-    return [this._r, this._g, this._b, this.alpha()]
+    return [this.red(), this.green(), this.blue(), this.alpha()]
   }
 
   toObject() {
     const [r, g, b, a] = this.toArray()
+    return { r, g, b, a }
+  }
+
+  toRawArray() {
+    return [parseFloat(this._r), parseFloat(this._g), parseFloat(this._b), parseFloat(this._a)]
+  }
+
+  toRawObject() {
+    const [r, g, b, a] = this.toRawArray()
     return { r, g, b, a }
   }
 }
@@ -510,9 +541,11 @@ class HSA extends BaseColor {
    */
   hue(degree) {
     if (isUndefined(degree)) {
-      return Math.round(this._h) + '°'
+      return this._h.times(360).round() + '°'
+    } else if (isBig(degree)) {
+      this._h = degree
     } else if (isNumeric(degree)) {
-      this._h = numberRange(parseFloat(degree), 0, 360)
+      this._h = big(numberRange(parseFloat(degree), 0, 360)).div(360)
     } else {
       throw new Error(`parameter should be number instead of ${typeof degree}`)
     }
@@ -532,8 +565,8 @@ class HSA extends BaseColor {
    * @param {Number} degree 加权角度值
    */
   rotate(degree) {
-    if (isNumber(degree)) {
-      this._h = (this._h + degree + 360) % 360
+    if (isNumeric(degree)) {
+      this._h = this._h.plus(big(parseFloat(degree)).div(360).plus(1)).mod(1)
     } else {
       throw new Error(`parameter should be number instead of ${typeof degree}`)
     }
@@ -643,7 +676,7 @@ class HSLA extends HSA {
   }
 
   toRawArray() {
-    return [parseInt(this.hue()), parseFloat(this._s), parseFloat(this._l), this.alpha()]
+    return [parseFloat(this._h), parseFloat(this._s), parseFloat(this._l), this.getRawAlpha()]
   }
 
   toRawObject() {
@@ -712,7 +745,7 @@ class HSVA extends HSA {
   }
 
   toRawArray() {
-    return [parseInt(this.hue()), parseFloat(this._s), parseFloat(this._v), this.alpha()]
+    return [parseFloat(this._h), parseFloat(this._s), parseFloat(this._v), this.getRawAlpha()]
   }
 
   toRawObject() {
@@ -726,22 +759,14 @@ class HSVA extends HSA {
  * HEX 构造器
  */
 class HEXA extends BaseColor {
-  constructor(hexa) {
+  constructor(r, g, b, a) {
     super()
 
-    hexa = hexa.toUpperCase()
-
-    let alpha = 'FF'
-
-    if (hexa.length === 7) {
-      this._hex = hexa
-    } else {
-      this._hex = hexa.slice(0, 7)
-
-      alpha = hexa.slice(7, 9)
-    }
-
-    this.alphaHex(alpha)
+    this._r = r
+    this._g = g
+    this._b = b
+    this._hex = _rgb2hex(r, g, b)
+    this.alpha(a)
   }
 
   alphaHex(value) {
@@ -754,12 +779,7 @@ class HEXA extends BaseColor {
   }
 
   rgba() {
-    return new RGBA(
-      parseInt('0x' + this._hex.slice(1, 3)),
-      parseInt('0x' + this._hex.slice(3, 5)),
-      parseInt('0x' + this._hex.slice(5, 7)),
-      this._a
-    )
+    return new RGBA(this._r, this._g, this._b, this._a)
   }
 
   hsla() {
@@ -791,11 +811,17 @@ class HEXA extends BaseColor {
   }
 
   toObject() {
-    return {
-      hex: this.toHex(),
-      hexa: this.toHexa(),
-      alpha: this.alpha()
-    }
+    const [r, g, b, a] = this.toArray()
+    return { r, g, b, a }
+  }
+
+  toRawArray() {
+    return [parseFloat(this._r), parseFloat(this._g), parseFloat(this._b), parseFloat(this._a)]
+  }
+
+  toRawObject() {
+    const [r, g, b, a] = this.toRawArray()
+    return { r, g, b, a }
   }
 }
 
@@ -891,26 +917,6 @@ class CMYK extends BaseColor {
   }
 }
 
-function getOrSetRatio(color, key, value) {
-  if (isUndefined(value)) {
-    return big2Percentage(color[key])
-  } else if (isNumeric(value)) {
-    color[key] = channelLength(value)
-  } else {
-    throwPercentageLikeError(value)
-  }
-  return color
-}
-
-function value2Binary(value) {
-  if (isString(value) && value.substr(value.length - 1, 1) === '%') {
-    value = (255 * parseFloat(value)) / 100
-  } else {
-    value = parseFloat(value)
-  }
-  return numberRange(Math.round(value), 0, 255)
-}
-
 /**
  * rgb/rgba色值转为RGBA对象
  * @param {string|{r:Number,g:Number,b:Number,a?:Number}} rgba rgb(255,0,0)/rgba(255,0,0,.5)
@@ -959,7 +965,11 @@ export function hexa2HEXA(hexa) {
     aH = 'ff'
   }
 
-  return new HEXA(`#${rH}${gH}${bH}${aH}`.toUpperCase())
+  return new HEXA(hex2Length(rH), hex2Length(gH), hex2Length(bH), hex2Length(aH))
+}
+
+function hex2Length(channel) {
+  return big(parseInt('0x' + channel)).div(255)
 }
 
 function hue2rgb(p1, p2, hue) {
@@ -1032,7 +1042,7 @@ export function clone(object) {
   } else if (object instanceof HSVA) {
     return new HSVA(object._h, object._s, object._v, object._a)
   } else if (object instanceof HEXA) {
-    return new HEXA(object._hex + decimal2Hex(object._a, 2))
+    return new HEXA(object._r, object._g, object._b, object._a)
   }
 
   return object
@@ -1048,7 +1058,7 @@ export function Color(value) {
       return clone(value)
     } else if (isNumeric(value.r) && isNumeric(value.g) && isNumeric(value.b)) {
       return rgba2RGBA(value)
-    } else if (isNumber(value.h) && isLimitPercentage(value.s)) {
+    } else if (isNumeric(value.h) && isLimitPercentage(value.s)) {
       if (isLimitPercentage(value.l)) {
         return hsla2HSLA(value)
       } else if (isLimitPercentage(value.v)) {
