@@ -1,3 +1,10 @@
+## [0.5.1](https://github.com/godxiaoji/colorfuls/compare/v0.5.0...v0.5.1) (2020-10-10)
+
+
+### Bug Fixes
+
+* **raw:** rgb and hue save by big ([ff25013](https://github.com/godxiaoji/colorfuls/commit/ff25013810ef821d41b21a5e6416a7931f3b2423))
+
 # [0.5.0](https://github.com/godxiaoji/colorfuls/compare/v0.4.0...v0.5.0) (2020-10-10)
 
 
