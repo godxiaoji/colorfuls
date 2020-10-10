@@ -265,7 +265,7 @@ describe('Color', function() {
 
   // translate
   describe('Translate', function() {
-    const translation = Colorfuls.translate('hsl(207, 92%, 67%, 0.55)')
+    var translation = Colorfuls.translate('hsl(207, 92%, 67%, 0.55)')
 
     describe('translation: translate("hsl(207, 92%, 67%, 0.55)")', function() {
       it('translation.Flutter -> Color(0x8C5DB3F8)', function() {
