@@ -1,3 +1,10 @@
+# [0.5.0](https://github.com/godxiaoji/colorfuls/compare/v0.4.0...v0.5.0) (2020-10-10)
+
+
+### Features
+
+* **cmyk:** support cmyk ([e7d2242](https://github.com/godxiaoji/colorfuls/commit/e7d22429eda4114cfa8113c7298dd75fb8b9e852))
+
 # [0.4.0](https://github.com/godxiaoji/colorfuls/compare/v0.3.1...v0.4.0) (2020-10-09)
 
 
