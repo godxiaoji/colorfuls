@@ -39,8 +39,8 @@ describe('Color', function() {
       it('hsl.toArray() -> "207°,92%,67%,1"', function() {
         should.equal(hslColor.toArray().toString(), '207°,92%,67%,1')
       })
-      it('hsl.toNumberArray() -> "207,0.92,0.67,1"', function() {
-        should.equal(hslColor.toNumberArray().toString(), '207,0.92,0.67,1')
+      it('hsl.toRawArray() -> "207,0.92,0.67,1"', function() {
+        should.equal(hslColor.toRawArray().toString(), '207,0.92,0.67,1')
       })
     })
 
@@ -61,8 +61,8 @@ describe('Color', function() {
       it('hsv.toArray() -> "207°,63%,97%,1"', function() {
         should.equal(hsvColor.toArray().toString(), '207°,63%,97%,1')
       })
-      it('hsv.toNumberArray() -> "207,0.63,0.97,1"', function() {
-        should.equal(hsvColor.toNumberArray().toString(), '207,0.63,0.97,1')
+      it('hsv.toRawArray() -> "207,0.63,0.97,1"', function() {
+        should.equal(hsvColor.toRawArray().toString(), '207,0.63,0.97,1')
       })
     })
   })
@@ -78,6 +78,9 @@ describe('Color', function() {
     it('HEX "#5CB1F8" should be HSV "207°, 63%, 97%"', function() {
       should.equal(Colorfuls('#5CB1F8').toHsv(), '207°, 63%, 97%')
     })
+    it('HEX "#5CB1F8" should be CMYK "63%, 29%, 0%, 3%"', function() {
+      should.equal(Colorfuls('#5CB1F8').toCmyk(), '63%, 29%, 0%, 3%')
+    })
     it('RGB "rgb(92, 177, 248)" should be HEX "#5CB1F8"', function() {
       should.equal(Colorfuls('rgb(92, 177, 248)').toHex(), '#5CB1F8')
     })
@@ -86,6 +89,9 @@ describe('Color', function() {
     })
     it('RGB "rgb(92, 177, 248)" should be HSV "207°, 63%, 97%"', function() {
       should.equal(Colorfuls('rgb(92, 177, 248)').toHsv(), '207°, 63%, 97%')
+    })
+    it('RGB "rgb(92, 177, 248)" should be CMYK "63%, 29%, 0%, 3%"', function() {
+      should.equal(Colorfuls('rgb(92, 177, 248)').toCmyk(), '63%, 29%, 0%, 3%')
     })
     it('HSL "hsl(207, 92%, 67%)" should be RGB "rgb(93, 179, 248)"', function() {
       should.equal(Colorfuls('hsl(207, 92%, 67%)').toRgb(), 'rgb(93, 179, 248)')
@@ -96,6 +102,9 @@ describe('Color', function() {
     it('HSL "hsl(207, 92%, 67%)" should be HSV "207°, 63%, 97%"', function() {
       should.equal(Colorfuls('hsl(207, 92%, 67%)').toHsv(), '207°, 63%, 97%')
     })
+    it('HSL "hsl(207, 92%, 67%)" should be CMYK "63%, 28%, 0%, 3%"', function() {
+      should.equal(Colorfuls('hsl(207, 92%, 67%)').toCmyk(), '63%, 28%, 0%, 3%')
+    })
     it('HSV "207°, 63%, 97%" should be RGB "rgb(92, 177, 248)"', function() {
       should.equal(Colorfuls({ h: 207, s: '63%', v: '97%' }).toRgb(), 'rgb(92, 177, 247)')
     })
@@ -104,6 +113,21 @@ describe('Color', function() {
     })
     it('HSV "207°, 63%, 97%" should be HSL "hsl(207, 91%, 66%)"', function() {
       should.equal(Colorfuls({ h: 207, s: '63%', v: '97%' }).toHsl(), 'hsl(207, 91%, 66%)')
+    })
+    it('HSV "207°, 63%, 97%" should be CMYK "63%, 28%, 0%, 3%"', function() {
+      should.equal(Colorfuls({ h: 207, s: '63%', v: '97%' }).toCmyk(), '63%, 28%, 0%, 3%')
+    })
+    it('CMYK "67%, 0%, 100%, 0%" should be HEX "#5CB0F7"', function() {
+      should.equal(Colorfuls({ c: 0.63, m: 0.29, y: 0, k: 0.03 }).toHex(), '#5CB0F7')
+    })
+    it('CMYK "67%, 0%, 100%, 0%" should be RGB "rgb(92, 177, 248)"', function() {
+      should.equal(Colorfuls({ c: 0.63, m: 0.29, y: 0, k: 0.03 }).toRgb(), 'rgb(92, 176, 247)')
+    })
+    it('CMYK "67%, 0%, 100%, 0%" should be HSL "hsl(207, 91%, 66%)"', function() {
+      should.equal(Colorfuls({ c: 0.63, m: 0.29, y: 0, k: 0.03 }).toHsl(), 'hsl(207, 91%, 66%)')
+    })
+    it('CMYK "67%, 0%, 100%, 0%" should be HSV "207°, 63%, 97%"', function() {
+      should.equal(Colorfuls({ c: 0.63, m: 0.29, y: 0, k: 0.03 }).toHsv(), '207°, 63%, 97%')
     })
 
     // rgba hexa hsla
@@ -254,7 +278,7 @@ describe('Color', function() {
         should.equal(translation.Android, 'Color.argb(140, 93, 179, 248)')
       })
       it('translation[".Net"] -> Color.FromArgb(140, 93, 179, 248)', function() {
-        should.equal(translation[".Net"], 'Color.FromArgb(140, 93, 179, 248)')
+        should.equal(translation['.Net'], 'Color.FromArgb(140, 93, 179, 248)')
       })
       it('translation.OpenGL -> glColor4f(0.36f, 0.70f, 0.97f, 0.55f)', function() {
         should.equal(translation.OpenGL, 'glColor4f(0.36f, 0.70f, 0.97f, 0.55f)')

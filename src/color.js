@@ -211,6 +211,27 @@ function _hsl2rgb(h, s, l) {
   }
 }
 
+function _cmyk2rgb(c, m, y, k) {
+  const t = num1.minus(k).times(255)
+
+  return {
+    r: num1.minus(c).times(t),
+    g: num1.minus(m).times(t),
+    b: num1.minus(y).times(t)
+  }
+}
+
+function _rgb2cmyk(r, g, b) {
+  const k = num1.minus(big(Math.max(r, g, b)).div(255))
+
+  return {
+    c: num1.minus(big(r).div(255)).minus(k).div(num1.minus(k)),
+    m: num1.minus(big(g).div(255)).minus(k).div(num1.minus(k)),
+    y: num1.minus(big(b).div(255)).minus(k).div(num1.minus(k)),
+    k
+  }
+}
+
 function parseAlpha(value) {
   let opacity = 1
 
@@ -315,6 +336,10 @@ class BaseColor {
     return this
   }
 
+  cmyk() {
+    return this
+  }
+
   toRgb() {
     return this.rgba().toRgb()
   }
@@ -345,6 +370,10 @@ class BaseColor {
 
   toHsva() {
     return this.hsva().toHsva()
+  }
+
+  toCmyk() {
+    return this.cmyk().toCmyk()
   }
 }
 
@@ -429,6 +458,12 @@ class RGBA extends BaseColor {
     return new HEXA(_rgb2hex(this._r, this._g, this._b) + decimal2Hex(this._a, 2))
   }
 
+  cmyk() {
+    const { c, m, y, k } = _rgb2cmyk(this._r, this._g, this._b)
+
+    return new CMYK(c, m, y, k, this._a)
+  }
+
   toRgb() {
     return `rgb(${this._r}, ${this._g}, ${this._b})`
   }
@@ -489,14 +524,7 @@ class HSA extends BaseColor {
    * @param {Number|String} ratio 比值 0.5/50%
    */
   saturation(value) {
-    if (isUndefined(value)) {
-      return big2Percentage(this._s)
-    } else if (isNumeric(value)) {
-      this._s = channelLength(value)
-    } else {
-      throwPercentageLikeError(value)
-    }
-    return this
+    return getOrSetRatio(this, '_s', value)
   }
 
   /**
@@ -533,6 +561,10 @@ class HSA extends BaseColor {
   hexa() {
     return this.rgba().hexa()
   }
+
+  cmyk() {
+    return this.rgba().cmyk()
+  }
 }
 
 /**
@@ -557,14 +589,7 @@ class HSLA extends HSA {
    * @param {Number|String} ratio 比值 0.5/50%
    */
   lightness(value) {
-    if (isUndefined(value)) {
-      return big2Percentage(this._l)
-    } else if (isNumeric(value)) {
-      this._l = channelLength(value)
-    } else {
-      throwPercentageLikeError(value)
-    }
-    return this
+    return getOrSetRatio(this, '_l', value)
   }
 
   /**
@@ -617,12 +642,12 @@ class HSLA extends HSA {
     return { h, s, l, a }
   }
 
-  toNumberArray() {
+  toRawArray() {
     return [parseInt(this.hue()), parseFloat(this._s), parseFloat(this._l), this.alpha()]
   }
 
-  toNumberObject() {
-    const [h, s, l, a] = this.toNumberArray()
+  toRawObject() {
+    const [h, s, l, a] = this.toRawArray()
 
     return { h, s, l, a }
   }
@@ -650,14 +675,7 @@ class HSVA extends HSA {
    * @param {Number|String} ratio 比值 0.5/50%
    */
   value(value) {
-    if (isUndefined(value)) {
-      return big2Percentage(this._v)
-    } else if (isNumeric(value)) {
-      this._v = channelLength(value)
-    } else {
-      throwPercentageLikeError(value)
-    }
-    return this
+    return getOrSetRatio(this, '_v', value)
   }
 
   rgba() {
@@ -676,7 +694,7 @@ class HSVA extends HSA {
   }
 
   toHsva() {
-    return `${this.hue()}, ${this.saturation()}, ${this.value()}, ${this.alpha()}`
+    return this.toArray().join(', ')
   }
 
   toString() {
@@ -693,12 +711,12 @@ class HSVA extends HSA {
     return { h, s, v, a }
   }
 
-  toNumberArray() {
+  toRawArray() {
     return [parseInt(this.hue()), parseFloat(this._s), parseFloat(this._v), this.alpha()]
   }
 
-  toNumberObject() {
-    const [h, s, v, a] = this.toNumberArray()
+  toRawObject() {
+    const [h, s, v, a] = this.toRawArray()
 
     return { h, s, v, a }
   }
@@ -752,6 +770,10 @@ class HEXA extends BaseColor {
     return this.rgba().hsva()
   }
 
+  cmyk() {
+    return this.rgba().cmyk()
+  }
+
   toHex() {
     return this._hex
   }
@@ -767,6 +789,117 @@ class HEXA extends BaseColor {
   toArray() {
     return [this._hex.slice(1, 3), this._hex.slice(3, 5), this._hex.slice(5, 7), this.alphaHex()]
   }
+
+  toObject() {
+    return {
+      hex: this.toHex(),
+      hexa: this.toHexa(),
+      alpha: this.alpha()
+    }
+  }
+}
+
+class CMYK extends BaseColor {
+  constructor(c, m, y, k, a) {
+    super()
+
+    this.cyan(c)
+    this.magenta(m)
+    this.yellow(y)
+    this.black(k)
+
+    // cmyk没有透明通道，存储只是为了防止转化丢失
+    this.alpha(isNumeric(a) || isBig(a) ? a : 1)
+  }
+
+  /**
+   * 获取/设置
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  cyan(value) {
+    return getOrSetRatio(this, '_c', value)
+  }
+
+  /**
+   * 获取/设置
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  magenta(value) {
+    return getOrSetRatio(this, '_m', value)
+  }
+
+  /**
+   * 获取/设置
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  yellow(value) {
+    return getOrSetRatio(this, '_y', value)
+  }
+
+  /**
+   * 获取/设置
+   * @param {Number|String} ratio 比值 0.5/50%
+   */
+  black(value) {
+    return getOrSetRatio(this, '_k', value)
+  }
+
+  rgba() {
+    const { r, g, b } = _cmyk2rgb(this._c, this._m, this._y, this._k)
+
+    return new RGBA(r, g, b, this._a)
+  }
+
+  hsla() {
+    return this.rgba().hsla()
+  }
+
+  hsva() {
+    return this.rgba().hsva()
+  }
+
+  hexa() {
+    return this.rgba().hexa()
+  }
+
+  toCmyk() {
+    return this.toArray().join(', ')
+  }
+
+  toString() {
+    return this.toCmyk()
+  }
+
+  toArray() {
+    return [this.cyan(), this.magenta(), this.yellow(), this.black()]
+  }
+
+  toObject() {
+    const [c, m, y, k] = this.toArray()
+
+    return { c, m, y, k }
+  }
+
+  toRawArray() {
+    return [parseFloat(this._c), parseFloat(this._m), parseFloat(this._y), parseFloat(this._k)]
+  }
+
+  toRawObject() {
+    const [c, m, y, k] = this.toRawArray()
+
+    return { c, m, y, k }
+  }
+}
+
+function getOrSetRatio(color, key, value) {
+  if (isUndefined(value)) {
+    return big2Percentage(color[key])
+  } else if (isNumeric(value)) {
+    color[key] = channelLength(value)
+  } else {
+    throwPercentageLikeError(value)
+  }
+  return color
 }
 
 function value2Binary(value) {
@@ -847,12 +980,12 @@ function hue2rgb(p1, p2, hue) {
 
 /**
  * hsl/hsla色值转为HSLA对象
- * @param {String|{h:Number,s:String|Number,l:String|Number,a?:Number}} hsla 颜色值
+ * @param {String|{h:String|Number,s:String|Number,l:String|Number,a?:Number}} hsla 颜色值
  */
 export function hsla2HSLA(hsla) {
   let matches
 
-  if (isObject(hsla) && isNumber(hsla.h) && isNumeric(hsla.s) && isNumeric(hsla.l)) {
+  if (isObject(hsla) && isNumeric(hsla.h) && isNumeric(hsla.s) && isNumeric(hsla.l)) {
     matches = [null, hsla.h, hsla.s, hsla.l, isNumeric(hsla.a) ? hsla.a : 1]
   } else if (isHsla(hsla)) {
     matches = hslaReg.exec(hsla.trim())
@@ -865,18 +998,26 @@ export function hsla2HSLA(hsla) {
 
 /**
  * hsv/hsva色值转为HSVA对象
- * @param {String|{h:Number,s:String|Number,v:String|Number,a?:Number}} hsva 颜色值
+ * @param {String|{h:String|Number,s:String|Number,v:String|Number,a?:Number}} hsva 颜色值
  */
 export function hsva2HSVA(hsva) {
-  let matches
-
-  if (isObject(hsva) && isNumber(hsva.h) && isNumeric(hsva.s) && isNumeric(hsva.v)) {
-    matches = [null, hsva.h, hsva.s, hsva.v, isNumeric(hsva.a) ? hsva.a : 1]
+  if (isObject(hsva) && isNumeric(hsva.h) && isNumeric(hsva.s) && isNumeric(hsva.v)) {
+    return new HSVA(hsva.h, hsva.s, hsva.v, isNumeric(hsva.a) ? hsva.a : 1)
   } else {
-    throw new Error('It is not a valid hsv/hsva string')
+    throw new Error('It is not a valid hsv/hsva object')
   }
+}
 
-  return new HSVA(...matches.slice(1, 5))
+/**
+ * hsv/hsva色值转为HSVA对象
+ * @param {String|{h:String|Number,s:String|Number,v:String|Number,a?:Number}} hsva 颜色值
+ */
+export function cmyk2CMYK(cmyk) {
+  if (isObject(cmyk) && isNumeric(cmyk.c) && isNumeric(cmyk.m) && isNumeric(cmyk.y) && isNumeric(cmyk.k)) {
+    return new CMYK(cmyk.c, cmyk.m, cmyk.y, cmyk.k)
+  } else {
+    throw new Error('It is not a valid cmyk object')
+  }
 }
 
 /**
@@ -913,6 +1054,8 @@ export function Color(value) {
       } else if (isLimitPercentage(value.v)) {
         return hsva2HSVA(value)
       }
+    } else if (isNumeric(value.c) && isNumeric(value.m) && isNumeric(value.y) && isNumeric(value.k)) {
+      return cmyk2CMYK(value)
     }
   } else if (isHexa(value)) {
     return hexa2HEXA(value)

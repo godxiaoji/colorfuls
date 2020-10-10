@@ -22,7 +22,7 @@ $ npm install colorfuls
 ## Usage
 
 ```
-import {Color, gradient, mix, linearGradient, translate} from 'colorfuls'
+import { Color, gradient, mix, linearGradient, translate } from 'colorfuls'
 ```
 
 ### Constructors
@@ -30,22 +30,25 @@ import {Color, gradient, mix, linearGradient, translate} from 'colorfuls'
 Support rgb/rgba, hex/hexa, hsl/hsla and hsv/hsva.
 
 ```
-const color = Color('rgba(255, 255, 255, 0.5)')           // -> new RGBA
-const color = Color({r: 255, g: 255, b: 255})             // -> new RGBA
-const color = Color('#5CB1F8')                            // -> new HEXA
-const color = Color('#fff')                               // -> new HEXA
-const color = Color('hsl(207, 92%, 67%)')                 // -> new HSLA
-const color = Color({h: 207, s: '92%', l: '67%', a: 0.5}) // -> new HSLA
-const color = Color({h: 106, s: '96%', v: '82%', a: 0.5}) // -> new HSVA
-const cloneColor = Color(color)                           // -> clone
+const color = Color('rgba(255, 255, 255, 0.5)')             // -> new RGBA
+const color = Color({ r: 255, g: 255, b: 255 })             // -> new RGBA
+const color = Color('#5CB1F8')                              // -> new HEXA
+const color = Color('#fff')                                 // -> new HEXA
+const color = Color('hsl(207, 92%, 67%)')                   // -> new HSLA
+const color = Color({ h: 207, s: '92%', l: '67%', a: 0.5 }) // -> new HSLA
+const color = Color({ h: 106, s: '96%', v: '82%', a: 0.5 }) // -> new HSVA
+const color = Color({ c: 0.63, m: 0.29, y: 0, k: 0.03 })    // -> new CMYK
+const cloneColor = Color(color)                             // -> clone
 ```
 
 ### Conversion
 
 ```
-const rgbaColor = Color('rgba(255, 255, 255, 0.5)')       // -> new RGBA
-const hslaColor = rgbaColor.hsla()                        // -> new HSLA
-const hexaColor = hslaColor.hexa()                        // -> new HEXA
+const rgbaColor = Color('rgba(255, 255, 255, 0.5)')         // -> new RGBA
+const hslaColor = rgbaColor.hsla()                          // -> new HSLA
+const hexaColor = hslaColor.hexa()                          // -> new HEXA
+const hsvaColor = hslaColor.hsva()                          // -> new HSVA
+const cmykColor = hslaColor.cmyk()                          // -> new CMYK
 ```
 
 ### getters
@@ -53,44 +56,78 @@ const hexaColor = hslaColor.hexa()                        // -> new HEXA
 ```
 const color = Color('rgba(255, 255, 255, 0.5)') // -> new RGBA
 
-color.toRgb()         // rgb(255, 255, 255)
-color.toRgba()        // rgba(255, 255, 255, 0.5)
-color.toHex()         // #FFFFFF
-color.toRgba()        // #FFFFFF80
-color.toHsl()         // hsl(0, 0%, 100%)
-color.toHsla()        // hsla(0, 0%, 100%, 0.5)
-color.toHsv()         // 0°, 0%, 100%
-color.toHsva()        // 0°, 0%, 100%, 0.5
+color.toRgb()            // rgb(255, 255, 255)
+color.toRgba()           // rgba(255, 255, 255, 0.5)
+color.toHex()            // #FFFFFF
+color.toRgba()           // #FFFFFF80
+color.toHsl()            // hsl(0, 0%, 100%)
+color.toHsla()           // hsla(0, 0%, 100%, 0.5)
+color.toHsv()            // 0°, 0%, 100%
+color.toHsva()           // 0°, 0%, 100%, 0.5
+color.toCmyk()           // 0%, 0%, 0%, 0%
+```
 
-// RGBA
-color.red()           // 255
-color.green()         // 255
-color.blue()          // 255
-color.alpha()         // 0.5
-color.toArray()       // [255, 255, 255, 0.5]
+#### RGBA
 
-// HEXA
-color = color.hexa()
-color.alpha()         // 0.5
-color.toArray()       // ['FF', 'FF', 'FF', '80']
+```
+const rgbaColor = Color('rgba(92, 177, 248, 1)') // -> new RGBA
+rgbaColor.red()           // 92
+rgbaColor.green()         // 177
+rgbaColor.blue()          // 248
+rgbaColor.alpha()         // 1
+rgbaColor.toArray()       // [92, 177, 248, 1]
+rgbaColor.toObject()      // { r: 92, g: 177, b: 248, a: 1}
+```
 
-// HSLA
-color = color.hsla()  // -> new HSLA
-color.hue()           // 0°
-color.saturation()    // 0%
-color.lightness()     // 100%
-color.alpha()         // 0.5
-color.toArray()       // ['0°', '0%', '100%', 0.5]
-color.toNumberArray() // [0, 0, 1, 0.5]
+#### HEXA
 
-// HSVA
-color = color.hsva()  // -> new HSVA
-color.hue()           // 0°
-color.saturation()    // 0%
-color.value()         // 100%
-color.alpha()         // 0.5
-color.toArray()       // ['0°', '0%', '100%', 0.5]
-color.toNumberArray() // [0, 0, 1, 0.5]
+```
+const hexaColor = Color('#FFFFFF80')
+hexaColor.alpha()         // 0.5
+hexaColor.toArray()       // ['FF', 'FF', 'FF', '80']
+hexaColor.toObject()      // {hex: '#FFFFFF', hexa: 'FFFFFF80', alpha: 0.5}
+```
+
+#### HSLA
+
+```
+const hslaColor = Color('hsla(207, 92%, 67%, 1)')  // -> new HSLA
+hslaColor.hue()           // 207°
+hslaColor.saturation()    // 92%
+hslaColor.lightness()     // 67%
+hslaColor.alpha()         // 1
+hslaColor.toArray()       // ['207°', '92%', '67%', 1]
+hslaColor.toObject()      // { h: '207°', s: '92%', l: '67%', a: 1 }
+hslaColor.toRawArray()    // [207, 0.92, 0.67, 1]
+hslaColor.toRawObject()   // { h: 207, s: 0.92, l: 0.67, a: 1 }
+```
+
+#### HSVA
+
+```
+const hsvaColor = Color('hsva(207, 92%, 67%, 1)')  // -> new HSVA
+hsvaColor.hue()           // 207°
+hsvaColor.saturation()    // 92%
+hsvaColor.value()         // 67%
+hsvaColor.alpha()         // 1
+hsvaColor.toArray()       // ['207°', '92%', '67%', 1]
+hsvaColor.toObject()      // { h: '207°', s: '92%', l: '67%', a: 1 }
+hsvaColor.toRawArray()    // [207, 0.92, 0.67, 1]
+hsvaColor.toRawObject()   // { h: 207, s: 0.92, l: 0.67, a: 1 }
+```
+
+#### CMYK
+
+```
+const cmykColor = Color({ c: 0.63, m: 0.29, y: 0, k: 0.03 } // -> new CMYK
+cmykColor.cyan()          // 63%
+cmykColor.magenta()       // 29%
+cmykColor.yellow()        // 0%
+cmykColor.black()         // 3%
+cmykColor.toArray()       // ['63%', '29%', '0%', '3%']
+cmykColor.toObject()      // { c: '63%', m: '29%', y: '0%', k: '3%' }
+cmykColor.toRawArray()    // [0.63, 0.29, 0, 0.03]
+cmykColor.toRawObject()   // { c: 0.63, m: 0.29, y: 0, k: 0.03 }
 
 ```
 
@@ -190,7 +227,7 @@ gs[0].toHex()                                // -> #000000
 
 ### Translate
 
-The result of `translate('hsl(207, 92%, 67%, 0.55)')` : 
+The result of `translate('hsl(207, 92%, 67%, 0.55)')` :
 
 ```
 {
