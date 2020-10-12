@@ -1,5 +1,7 @@
 # colorfuls
 
+<p align="center"><img width="240" src="https://raw.githubusercontent.com/godxiaoji/colorfuls/master/logo.png" alt="colorfuls"></p>
+
 A small Javascript library for color conversion and manipulation. Also provides color mixin and gradient.
 
 ## Install
