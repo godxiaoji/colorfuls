@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Mocha</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="mocha.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="mocha.css" />
   </head>
   <body>
     <div id="mocha"></div>
-    <script src="mocha.js"></script>
+    <script src="./mocha.js"></script>
     <script src="../node_modules/chai/chai.js"></script>
-    <script src="../dist/colorfuls.js"></script>
-    <script>var should = chai.should();</script>
-    <script>mocha.setup('bdd');</script>
-    <script src="tests.spec.js"></script>
+    <script src="../lib/index.js"></script>
     <script>
-      mocha.run();
+      var should = chai.should()
+    </script>
+    <script>
+      mocha.setup('bdd')
+    </script>
+    <script src="./tests.spec.js"></script>
+    <script>
+      mocha.run()
     </script>
   </body>
 </html>

@@ -1,24 +1,19 @@
 module.exports = {
-  root: true,
   env: {
     browser: true,
-    node: true,
-    mocha: true
+    es6: true,
+    node: true
   },
-  extends: ['eslint:recommended'],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/eslint-recommended'],
   globals: {
-    define: 'readonly'
+    Atomics: 'readonly',
+    SharedArrayBuffer: 'readonly'
   },
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: 'module'
   },
-  rules: {
-    strict: 2,
-    'newline-per-chained-call': 0,
-    semi: ['error', 'never'],
-    'comma-dangle': ['error', 'never'],
-    'array-bracket-spacing': ['error', 'never'],
-    'space-before-function-paren': ['error', 'never']
-  }
+  plugins: ['@typescript-eslint'],
+  rules: {}
 }
