@@ -173,11 +173,17 @@ describe('Color', function () {
     it('invert(rgb(0, 100, 255)): -> rgb(255, 155, 0)', function () {
       should.equal(Colorfuls.invert('rgb(0, 100, 255)').rgb().toRgb(), 'rgb(255, 155, 0)')
     })
-    it('isDark(rgb(255, 155, 0)): -> true', function () {
-      should.equal(Colorfuls.isDark('rgb(255, 155, 0)'), false)
+    it('isDark(rgb(102, 103, 171)): -> true', function () {
+      should.equal(Colorfuls.isDark('rgb(102, 103, 171)'), true)
     })
-    it('isLight(rgb(255, 155, 0)): -> false', function () {
-      should.equal(Colorfuls.isLight('rgb(255, 155, 0)'), true)
+    it('isLight(rgb(102, 103, 171)): -> false', function () {
+      should.equal(Colorfuls.isLight('rgb(102, 103, 171)'), false)
+    })
+    it('isDark(rgb(226, 192, 191)): -> true', function () {
+      should.equal(Colorfuls.isDark('rgb(226, 192, 191)'), false)
+    })
+    it('isLight(rgb(226, 192, 191)): -> false', function () {
+      should.equal(Colorfuls.isLight('rgb(226, 192, 191)'), true)
     })
 
     // rgba
