@@ -87,6 +87,8 @@ export declare class RGBColor extends BaseColor {
         b: number;
         a: number;
     };
+    isDark(): boolean;
+    isLight(): boolean;
 }
 /**
  * HSA 构造
@@ -172,6 +174,8 @@ export declare class HSLColor extends HSA {
         l: number;
         a: number;
     };
+    isDark(): boolean;
+    isLight(): boolean;
 }
 /**
  * HSVColor 构造
@@ -210,6 +214,8 @@ export declare class HSVColor extends HSA {
         v: number;
         a: number;
     };
+    isDark(): boolean;
+    isLight(): boolean;
 }
 /**
  * HEX 构造器
@@ -244,6 +250,8 @@ export declare class HEXColor extends BaseColor {
         b: number;
         a: number;
     };
+    isDark(): boolean;
+    isLight(): boolean;
 }
 export declare class CMYKColor extends BaseColor {
     _c: number;
@@ -280,6 +288,8 @@ export declare class CMYKColor extends BaseColor {
         y: number;
         k: number;
     };
+    isDark(): boolean;
+    isLight(): boolean;
 }
 interface RGBOptions {
     r: PercentageLike;

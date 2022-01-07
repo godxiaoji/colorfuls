@@ -34,3 +34,11 @@ export declare function numberRange(value: number, min?: number, max?: number): 
  * @param {String|number} value 100%/0.1
  */
 export declare function percentage2Length(value: string | number): number;
+/**
+ * 计算灰阶值
+ * @param {Number} r red
+ * @param {Number} g green
+ * @param {Number} b blue
+ * @see https://www.cnblogs.com/zhangjiansheng/p/6925722.html
+ */
+export declare function rgb2Gray(r: number, g: number, b: number): number;

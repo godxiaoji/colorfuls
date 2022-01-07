@@ -5,7 +5,8 @@ import {
   isPercentage,
   isLimitPercentage,
   percentage2Length,
-  number2Percentage
+  number2Percentage,
+  rgb2Gray
 } from './util'
 
 export type PercentageLike = number | string
@@ -448,6 +449,13 @@ export class RGBColor extends BaseColor {
     const [r, g, b, a] = this.toRawArray()
     return { r, g, b, a }
   }
+
+  isDark() {
+    return rgb2Gray(this.getRed(), this.getGreen(), this.getBlue()) < 192
+  }
+  isLight() {
+    return !this.isDark()
+  }
 }
 
 /**
@@ -619,6 +627,13 @@ export class HSLColor extends HSA {
 
     return { h, s, l, a }
   }
+
+  isDark() {
+    return this.rgb().isDark()
+  }
+  isLight() {
+    return this.rgb().isLight()
+  }
 }
 
 /**
@@ -691,6 +706,13 @@ export class HSVColor extends HSA {
     const [h, s, v, a] = this.toRawArray()
     return { h, s, v, a }
   }
+
+  isDark() {
+    return this.rgb().isDark()
+  }
+  isLight() {
+    return this.rgb().isLight()
+  }
 }
 
 /**
@@ -756,6 +778,13 @@ export class HEXColor extends BaseColor {
   toRawObject() {
     const [r, g, b, a] = this.toRawArray()
     return { r, g, b, a }
+  }
+
+  isDark() {
+    return this.rgb().isDark()
+  }
+  isLight() {
+    return this.rgb().isLight()
   }
 }
 
@@ -850,6 +879,13 @@ export class CMYKColor extends BaseColor {
   toRawObject() {
     const [c, m, y, k] = this.toRawArray()
     return { c, m, y, k }
+  }
+
+  isDark() {
+    return this.rgb().isDark()
+  }
+  isLight() {
+    return this.rgb().isLight()
   }
 }
 

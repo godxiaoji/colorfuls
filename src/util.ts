@@ -81,3 +81,16 @@ export function percentage2Length(value: string | number) {
 
   return parseFloat(value as string)
 }
+
+/**
+ * 计算灰阶值
+ * @param {Number} r red
+ * @param {Number} g green
+ * @param {Number} b blue
+ * @see https://www.cnblogs.com/zhangjiansheng/p/6925722.html
+ */
+export function rgb2Gray(r: number, g: number, b: number) {
+  // 著名的心理学公式
+  // return (r * 299 + g * 587 + b * 114) / 1000
+  return (r * 38 + g * 75 + b * 15) >> 7
+}

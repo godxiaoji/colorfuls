@@ -1,18 +1,12 @@
-import { Color, ColorOptions } from './color'
+import { Color } from './color'
+import type { ColorOptions } from './color'
+import { rgb2Gray } from './util'
 
 /**
- * 计算灰阶值
- * @param {Number} r red
- * @param {Number} g green
- * @param {Number} b blue
- * @see https://www.cnblogs.com/zhangjiansheng/p/6925722.html
+ * 反色
+ * @param value 颜色值
+ * @returns Color实例
  */
-function rgb2Gray(r: number, g: number, b: number) {
-  // 著名的心理学公式
-  // return (r * 299 + g * 587 + b * 114) / 1000
-  return (r * 38 + g * 75 + b * 15) >> 7
-}
-
 export function invert(value: ColorOptions) {
   const color = Color(value).rgb()
 
@@ -22,36 +16,54 @@ export function invert(value: ColorOptions) {
     .setBlue(255 - color.getBlue())
 }
 
+/**
+ * 补色
+ * @param value 颜色值
+ * @returns Color实例
+ */
 export function complement(value: ColorOptions) {
   return Color(value).hsl().rotate(180)
 }
 
+/**
+ * 相近色
+ * @param value 颜色值
+ * @returns Color实例
+ */
 export function nears(value: ColorOptions) {
   return [Color(value).hsl().rotate(-30), Color(value).hsl().rotate(30)]
 }
 
+/**
+ * 对比色
+ * @param value 颜色值
+ * @returns Color实例
+ */
 export function contrasts(value: ColorOptions) {
   return [Color(value).hsl().rotate(-120), Color(value).hsl().rotate(120)]
 }
 
 /**
  * 是否深色调
- * @param {String} value
+ * @param value 颜色值
  */
 export function isDark(value: ColorOptions) {
-  const color = Color(value).rgb()
-
-  return rgb2Gray(color.getRed(), color.getGreen(), color.getBlue()) < 128
+  return Color(value).isDark()
 }
 
 /**
  * 是否浅色调
- * @param {String} value
+ * @param value 颜色值
  */
 export function isLight(value: ColorOptions) {
-  return !isDark(value)
+  return Color(value).isLight()
 }
 
+/**
+ * 转为灰度色
+ * @param value 颜色值
+ * @returns Color实例
+ */
 export function grayscale(value: ColorOptions) {
   const color = Color(value).rgb()
   const gray = Math.round(rgb2Gray(color.getRed(), color.getGreen(), color.getBlue()))
